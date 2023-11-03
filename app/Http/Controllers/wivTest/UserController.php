@@ -4,13 +4,19 @@ namespace App\Http\Controllers\wivTest;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class UserController extends BaseController
 {
+    public function __construct(protected UserService $userService)
+    {
+
+    }
     /**
      * Display a listing of the resource.
      */
@@ -23,9 +29,10 @@ class UserController extends BaseController
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request): JsonResponse
     {
-
+        $user = $this->userService->create($request->validated());
+        return $this->sendResponse(new UserResource($user));
     }
 
     /**
