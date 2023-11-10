@@ -36,6 +36,6 @@ Route::post('/register2', [AuthWivController::class, 'register']);
 
 // Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::post('/logout2', [AuthWivController::class, 'logout']);
+    Route::post('/logout', [AuthWivController::class, 'logout']);
     //Route::resources('/', [Controller::class, '']);
 });
