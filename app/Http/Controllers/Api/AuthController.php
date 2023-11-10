@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Casts\Json;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -69,7 +71,7 @@ class AuthController extends Controller
      * @param Request $request
      * @return User
      */
-    public function loginUser(Request $request): string
+    public function loginUser(Request $request): JsonResponse
     {
         try {
             // validated
@@ -93,14 +95,15 @@ class AuthController extends Controller
                     'message' => 'Email & password does not match with our record.',
                 ], 401);
             }
-
+        
             $user = User::where('email', $request->email)->first();
-
+            $token = $user->createToken('API TOKEN')->plainTextToken;
+        
+            $cookie = cookie('token', $token, 60 * 24); // 1 day
+        
             return response()->json([
-                'status' => true,
-                'message' => 'User logged in successfully',
-                'token' => $user->createToken("API TOKEN")->plainTextToken
-            ], 200);
+                'user' => new UserResource($user),
+            ])->withCookie($cookie);
 
         } catch (\Throwable $th) {
             return response()->json([
