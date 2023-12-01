@@ -30,10 +30,6 @@ Route::post('/register', [AuthController::class, 'createUser'])
 
 Route::post('/login', [AuthController::class, 'loginUser']);
 
-// Public routes
-Route::post('/login2', [AuthWivController::class, 'login']);
-Route::post('/register2', [AuthWivController::class, 'register']);
-
 // Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [AuthWivController::class, 'logout']);
