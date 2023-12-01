@@ -29,6 +29,7 @@ class AuthWivController extends Controller
         return  $this->success([
             'user' => $user,
             'token' => $user->createToken('API Token of ' . $user->name)->plainTextToken
+
         ]);
     }
 

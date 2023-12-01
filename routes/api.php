@@ -22,16 +22,13 @@ use App\Http\Controllers\AuthWivController;
 });*/
 
 Route::get('user', [AuthController::class, 'user']);
-/*Route::post('/register', [AuthController::class, 'createUser']);
-Route::post('/login', [AuthController::class, 'loginUser']);*/
 
-Route::post('/register', [AuthController::class, 'createUser'])
-    ->middleware('guest');
+/*Route::prefix('auth')->group(function() {
+    Route::post('/register', [AuthController::class, 'createUser']);
+    Route::post('/login', [AuthController::class, 'loginUser']);
+    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+});*/
 
+Route::post('/register', [AuthController::class, 'createUser'])->middleware('guest');
 Route::post('/login', [AuthController::class, 'loginUser']);
-
-// Protected routes
-Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::post('/logout', [AuthWivController::class, 'logout']);
-    //Route::resources('/', [Controller::class, '']);
-});
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
