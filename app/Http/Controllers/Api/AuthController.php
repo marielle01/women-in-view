@@ -52,8 +52,7 @@ class AuthController extends Controller
             ]);
 
             return response()->json([
-                'status' => true,
-                'message' => 'User created successfully',
+                'user' => $user,
                 'token' => $user->createToken("API TOKEN")->plainTextToken
             ], 200);
 
