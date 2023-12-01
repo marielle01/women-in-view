@@ -25,17 +25,24 @@ Route::get('user', [AuthController::class, 'user']);
 /*Route::post('/register', [AuthController::class, 'createUser']);
 Route::post('/login', [AuthController::class, 'loginUser']);*/
 
-Route::post('/register', [AuthController::class, 'createUser'])
-    ->middleware('guest');
+Route::get('test', function (){
+    return;
+});
 
+/*Route::prefix('auth')->group(function() {
+    Route::post('/register', [AuthController::class, 'createUser']);
+    Route::post('/login', [AuthController::class, 'loginUser']);
+    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+});*/
+
+Route::post('/register', [AuthController::class, 'createUser'])->middleware('guest');
 Route::post('/login', [AuthController::class, 'loginUser']);
-
-// Public routes
-Route::post('/login2', [AuthWivController::class, 'login']);
-Route::post('/register2', [AuthWivController::class, 'register']);
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 // Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::post('/logout', [AuthWivController::class, 'logout']);
+    //Route::post('/logout', [AuthWivController::class, 'logout']);
+    //Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/me', [AuthController::class, 'me']);
     //Route::resources('/', [Controller::class, '']);
 });

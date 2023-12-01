@@ -19,7 +19,6 @@ class AuthController extends Controller
         return 'Authenticated user';
     }
 
-
     /**
      * @param Request $request
      * @return User
@@ -54,7 +53,7 @@ class AuthController extends Controller
             return response()->json([
                 'status' => true,
                 'message' => 'User created successfully',
-                'token' => $user->createToken("API TOKEN")->plainTextToken
+                'token' => $user->createToken("API TOKEN OF " . $user->name)->plainTextToken
             ], 200);
 
         } catch (\Throwable $th) {
@@ -95,14 +94,16 @@ class AuthController extends Controller
                     'message' => 'Email & password does not match with our record.',
                 ], 401);
             }
-        
+
             $user = User::where('email', $request->email)->first();
             $token = $user->createToken('API TOKEN')->plainTextToken;
-        
+
             $cookie = cookie('token', $token, 60 * 24); // 1 day
-        
+
             return response()->json([
                 'user' => new UserResource($user),
+                'token' => $token,
+                'message' => 'You are sign in!'
             ])->withCookie($cookie);
 
         } catch (\Throwable $th) {
@@ -113,4 +114,24 @@ class AuthController extends Controller
         }
     }
 
+    public function logout(Request $request): JsonResponse
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'User logged out successfully',
+        ], 200);
+    }
+
+    public function me(): JsonResponse
+    {
+        $user = auth('sanctum')->user();
+
+        return response()->json([
+            'status' => true,
+            'message' => 'User logged in successfully',
+            'user' => $user
+        ], 200);
+    }
 }

@@ -20,10 +20,11 @@ class UserController extends BaseController
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(): \Illuminate\Database\Eloquent\Collection
     {
-        $users = UserResource::collection(User::all());
-        return $this->sendResponse($users);
+        /*$users = UserResource::collection(User::all());
+        return $this->sendResponse($users);*/
+        return User::all();
     }
 
     /**
