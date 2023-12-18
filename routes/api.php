@@ -26,6 +26,7 @@ Route::post('/register', [AuthController::class, 'createUser'])->middleware('gue
 Route::post('/login', [AuthController::class, 'loginUser']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
+
 // Protected routes
 /*Route::group(['middleware' => ['auth:sanctum']], function () {
     //Route::post('/logout', [AuthController::class, 'logout']);
