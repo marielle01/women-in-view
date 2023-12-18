@@ -96,7 +96,7 @@ class AuthController extends Controller
             }
 
             $user = User::where('email', $request->email)->first();
-            $token = $user->createToken('API TOKEN')->plainTextToken;
+            $token = $user->createToken("API TOKEN OF " . $user->name)->plainTextToken;
 
             $cookie = cookie('token', $token, 60 * 24); // 1 day
 

@@ -1,15 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\wivTest;
+namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\BaseController;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\UserService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class UserController extends BaseController
 {
@@ -39,25 +37,27 @@ class UserController extends BaseController
     /**
      * Display the specified resource.
      */
-    public function show(User $user)
+    public function show(User $user): JsonResponse
     {
-        //
+        return $this->sendResponse(new UserResource($user), 'User retrieved successfully.');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(StoreUserRequest $request, User $user): JsonResponse
     {
-        //
+        $this->userService->update($request->validated(), $user);
+        return $this->sendResponse($user, 'User updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy(User $user): JsonResponse
     {
-        //
+        $user->delete();
+        return $this->sendResponse('user deleted successfully');
     }
 
 }
