@@ -96,13 +96,11 @@ class AuthController extends Controller
             $user = User::where('email', $request->email)->first();
             $token = $user->createToken('API TOKEN')->plainTextToken;
 
-            $cookie = cookie('token', $token, 60 * 24); // 1 day
-
             return response()->json([
                 'user' => new UserResource($user),
                 'token' => $token,
                 'message' => 'You are sign in!'
-            ])->withCookie($cookie);
+            ]);
 
         } catch (\Throwable $th) {
             return response()->json([
