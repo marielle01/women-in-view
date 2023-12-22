@@ -17,17 +17,7 @@ use App\Http\Controllers\AuthWivController;
 |
 */
 
-/*Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
-});*/
-
 Route::get('user', [AuthController::class, 'user']);
-
-/*Route::prefix('auth')->group(function() {
-    Route::post('/register', [AuthController::class, 'createUser']);
-    Route::post('/login', [AuthController::class, 'loginUser']);
-    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-});*/
 
 Route::post('/register', [AuthController::class, 'createUser'])->middleware('guest');
 Route::post('/login', [AuthController::class, 'loginUser']);
