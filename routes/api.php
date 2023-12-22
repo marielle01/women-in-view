@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\V1\PermissionController;
+use App\Http\Controllers\Api\V1\RoleController;
 use App\Http\Controllers\Api\V1\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -32,7 +34,30 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanc
     Route::get('/me', [AuthController::class, 'me']);
 });*/
 
+/*Route::prefix('user-cards')
+    ->as('user-cards.')
+    ->middleware('can: student-cards')
+    ->group(static function(): void {
+    Route::post('/add', [UserController::class]);
+}*/
+
+
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function() {
+    Route::get('/admin', [UserController::class, 'index']);
+    Route::resource('/roles', RoleController::class);
+    Route::resource('/permissions', PermissionController::class);
+
+});
+
 // Resources routes
+/*Route::group(['middleware' => ['auth']], function () {
+    Route::resources([
+        'users' => UserController::class,
+        'roles' => RoleController::class,
+        'movies' => MovieController::class,
+    ]);
+});*/
+
 Route::resources([
     'users' => UserController::class,
 ]);
