@@ -52,7 +52,5 @@ class BaseController extends Controller
 
         return response()->json($response, $code);
     }
-
-
 }
 

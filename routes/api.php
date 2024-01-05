@@ -4,7 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\AuthWivController;
+use App\Http\Controllers\Api\V1\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,3 +22,7 @@ Route::get('user', [AuthController::class, 'user']);
 Route::post('/register', [AuthController::class, 'createUser'])->middleware('guest');
 Route::post('/login', [AuthController::class, 'loginUser']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+
+Route::resources(
+    'Users' => UserController::class,
+);
