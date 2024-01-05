@@ -23,6 +23,6 @@ Route::post('/register', [AuthController::class, 'createUser'])->middleware('gue
 Route::post('/login', [AuthController::class, 'loginUser']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
-Route::resources(
-    'Users' => UserController::class,
-);
+Route::resources([
+    'users' => UserController::class,
+]);
