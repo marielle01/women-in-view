@@ -11,7 +11,7 @@ class UserService
 {
     public function create(array $data): User
     {
-        dd($data);
+        //dd($data);
         $user = new User();
 
         $user->fill($data);

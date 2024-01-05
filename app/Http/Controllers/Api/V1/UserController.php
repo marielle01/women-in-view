@@ -15,6 +15,7 @@ class UserController extends BaseController
 {
     public function __construct(protected UserService $userService)
     {
+        $this->authorizeResource(User::class, 'user');
 
     }
     /**
