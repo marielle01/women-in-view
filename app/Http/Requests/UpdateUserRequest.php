@@ -25,7 +25,6 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'name' => [
-                'required',
                 'string',
                 'max:255',
             ],
@@ -36,7 +35,6 @@ class UpdateUserRequest extends FormRequest
                 Rule::unique(User::class),
             ],
             'password' => [
-                'required',
                 'string',
                 'regex:/^(?=.*?[a-zA-Z])(?=.*?[0-9])(=.*?[#?!@$%^&*-]){0,}.{8,}$/',
             ],

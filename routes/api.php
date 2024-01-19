@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\PermissionController;
 use App\Http\Controllers\Api\V1\RoleController;
 use App\Http\Controllers\Api\V1\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\RegisteredUserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,11 +18,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-/*Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return $request->user();
-});*/
-
 Route::get('user', [AuthController::class, 'user']);
+
+Route::post('/register', [AuthController::class, 'createUser'])->middleware('guest');
+Route::post('/login', [AuthController::class, 'loginUser']);
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+
+Route::resources([
+    'users' => UserController::class,
+]);
+
 
 Route::post('/register', [AuthController::class, 'createUser'])->middleware('guest');
 Route::post('/login', [AuthController::class, 'loginUser']);

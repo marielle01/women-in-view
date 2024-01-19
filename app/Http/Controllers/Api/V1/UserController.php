@@ -18,22 +18,27 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use App\Models\PasswordResetToken;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateUserRequest;
+use App\Models\User;
+use App\Services\UserService;
+use Illuminate\Http\JsonResponse;
 
 class UserController extends BaseController
 {
     public function __construct(protected UserService $userService)
     {
+        $this->authorizeResource(User::class, 'user');
 
     }
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(): \Illuminate\Database\Eloquent\Collection
     {
-        $users = UserResource::collection(User::all());
-        // Retrieve all users and return them.
-        return $this->sendResponse($users);
-        //return User::all();
+        /*$users = UserResource::collection(User::all());
+        return $this->sendResponse($users);*/
+        return User::all();
     }
 
     /**
