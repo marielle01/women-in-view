@@ -12,6 +12,7 @@ use App\Mail\ConfirmPasswordReset;
 use App\Mail\PasswordResetNotification;
 use App\Models\User;
 use App\Services\UserService;
+use Exception;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\App;
@@ -20,9 +21,6 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\PasswordResetToken;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateUserRequest;
-use App\Models\User;
-use App\Services\UserService;
-use Illuminate\Http\JsonResponse;
 
 class UserController extends BaseController
 {
@@ -83,12 +81,12 @@ class UserController extends BaseController
         return $this->sendResponse('user deleted successfully');
     }
 
+
     /**
      * Method to handle the forgot password request.
      *
      * @throws \Exception
      */
-
     public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
     {
         // Retrieve the user associated with the specified email address.
