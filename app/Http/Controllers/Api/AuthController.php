@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\BaseController;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Models\User;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class AuthController extends Controller
+class AuthController extends BaseController
 {
     public function user(): string
     {
@@ -94,7 +95,7 @@ class AuthController extends Controller
             }
 
             $user = User::where('email', $request->email)->first();
-            $token = $user->createToken('API TOKEN')->plainTextToken;
+            $token = $user->createToken("API TOKEN OF " . $user->name)->plainTextToken;
 
             return response()->json([
                 'user' => new UserResource($user),
