@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\User;
+use App\Models\Api\V1\User;
 
 /**
  * Class UserService.

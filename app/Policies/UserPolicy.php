@@ -2,8 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\User;
-use Illuminate\Auth\Access\Response;
+use App\Models\Api\V1\User;
 
 class UserPolicy
 {
