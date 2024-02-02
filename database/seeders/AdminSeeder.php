@@ -2,10 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Api\V1\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class AdminSeeder extends Seeder
 {

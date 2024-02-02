@@ -3,11 +3,7 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\TvMovie;
-use App\Models\User;
 use Illuminate\Database\Seeder;
-use App\Enums\RoleEnum;
-use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
