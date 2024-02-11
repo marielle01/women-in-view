@@ -3,24 +3,20 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\BaseController;
-use App\Http\Requests\ChangePasswordRequest;
-use App\Http\Requests\ForgotPasswordRequest;
-use App\Http\Requests\ResetPasswordRequest;
-use App\Http\Requests\StoreUserRequest;
-use App\Http\Resources\UserResource;
+use App\Http\Requests\Api\V1\ChangePasswordRequest;
+use App\Http\Requests\Api\V1\ForgotPasswordRequest;
+use App\Http\Requests\Api\V1\ResetPasswordRequest;
+use App\Http\Requests\Api\V1\StoreUserRequest;
+use App\Http\Resources\Api\V1\UserResource;
 use App\Mail\ConfirmPasswordReset;
 use App\Mail\PasswordResetNotification;
-use App\Models\User;
+use App\Models\Api\V1\PasswordResetToken;
+use App\Models\Api\V1\User;
 use App\Services\UserService;
 use Exception;
-use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use App\Models\PasswordResetToken;
-use App\Http\Controllers\Controller;
-use App\Http\Requests\UpdateUserRequest;
 
 class UserController extends BaseController
 {

@@ -5,7 +5,8 @@ use App\Http\Controllers\Api\V1\PermissionController;
 use App\Http\Controllers\Api\V1\RoleController;
 use App\Http\Controllers\Api\V1\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Api\V1\MovieReviewController;
+use App\Http\Controllers\Api\V1\ReviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,44 +21,29 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 
 Route::get('user', [AuthController::class, 'user']);
 
+// Authentication
 Route::post('/register', [AuthController::class, 'createUser'])->middleware('guest');
 Route::post('/login', [AuthController::class, 'loginUser']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
-Route::resources([
-    'users' => UserController::class,
-]);
+// Password Routes
+Route::post('/users/forgot-password', [UserController::class, 'forgotPassword']);
+Route::post('/users/reset-password', [UserController::class, 'resetPassword']);
+Route::post('/users/change-password', [UserController::class, 'changePassword'])
+    ->middleware('auth:sanctum');
 
 
-Route::post('/register', [AuthController::class, 'createUser'])->middleware('guest');
-Route::post('/login', [AuthController::class, 'loginUser']);
-Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
-
-
+// Roles and Permissions
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function() {
     Route::get('/admin', [UserController::class, 'index']);
     Route::resource('/roles', RoleController::class);
     Route::resource('/permissions', PermissionController::class);
 });
 
-// Password Routes
-Route::post('/users/forgot-password', [UserController::class, 'forgotPassword']);
-Route::post('/users/reset-password', [UserController::class, 'resetPassword']);
 
-Route::post('/users/change-password', [UserController::class, 'changePassword'])
-    ->middleware('auth:sanctum');
-
-
+// CRUD
 Route::resources([
     'users' => UserController::class,
+    'movies' => MovieReviewController::class,
+    'review' => ReviewController::class,
 ]);
-
-
-/*Route::middleware('auth')->group(function (){
-    //Route::resources('users' => UserController::class);
-    Route::get('users', [UserController::class, 'index']);
-    Route::post('users', [UserController::class, 'store']);
-    Route::get('users/{id}', [UserController::class, 'show']);
-    Route::put('users/{id}', [UserController::class, 'update']);
-    Route::delete('users/{id}', [UserController::class, 'destroy']);
-});*/
