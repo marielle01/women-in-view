@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\BaseController;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\Api\V1\UserResource;
 use App\Models\Api\V1\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

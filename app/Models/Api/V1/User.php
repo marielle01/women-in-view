@@ -45,8 +45,11 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function reviews(): BelongsToMany
+    /**
+     * @return BelongsToMany
+     */
+    public function movie(): BelongsToMany
     {
-        return $this->belongsToMany(Review::class);
+        return $this->belongsToMany(MovieReview::class);
     }
 }

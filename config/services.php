@@ -31,4 +31,10 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'tmdb' => [
+        'token' => env('TMDB_TOKEN'),
+        //'endpoint' => env('TMDB_ENDPOINT'),
+        //'api' => env('TMDB_APP_KEY'),
+    ]
+
 ];

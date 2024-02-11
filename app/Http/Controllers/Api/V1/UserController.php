@@ -7,7 +7,7 @@ use App\Http\Requests\Api\V1\ChangePasswordRequest;
 use App\Http\Requests\Api\V1\ForgotPasswordRequest;
 use App\Http\Requests\Api\V1\ResetPasswordRequest;
 use App\Http\Requests\Api\V1\StoreUserRequest;
-use App\Http\Resources\UserResource;
+use App\Http\Resources\Api\V1\UserResource;
 use App\Mail\ConfirmPasswordReset;
 use App\Mail\PasswordResetNotification;
 use App\Models\Api\V1\PasswordResetToken;
