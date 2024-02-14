@@ -4,7 +4,7 @@ namespace App\Http\Requests\Api\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ForgotPasswordRequest extends FormRequest
+class StoreMovieRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,10 +22,13 @@ class ForgotPasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => [
-                'required',
-                'email',
-            ]
+            'imdb_id' => ['required', 'integer'],
+            'original_title' => ['required', 'string'],
+            'poster_path' => ['required', 'string'],
+            'overview' => ['required', 'longText'],
+            'release_date' => ['required', 'date'],
+            'user_id' => ['required', 'integer'],
+            'rating' => ['required', 'integer'],
         ];
     }
 }

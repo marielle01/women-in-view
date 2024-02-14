@@ -5,6 +5,7 @@ namespace App\Models\Api\V1;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -48,8 +49,8 @@ class User extends Authenticatable
     /**
      * @return BelongsToMany
      */
-    public function movie(): BelongsToMany
+    public function movie(): HasMany
     {
-        return $this->belongsToMany(MovieReview::class);
+        return $this->hasMany(Movie::class);
     }
 }

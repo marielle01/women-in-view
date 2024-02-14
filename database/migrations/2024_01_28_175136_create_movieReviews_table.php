@@ -12,13 +12,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('movieReviews', function (Blueprint $table) {
+        Schema::create('movies', function (Blueprint $table) {
             $table->id();
-            $table->integer('tmdbId')->unique();
-            $table->string('title');
-            $table->string('posterPath');
-            $table->longText('synopsis')->nullable();
-            $table->date('year');
+            $table->string('imdb_id')->nullable()->unique();
+            $table->string('original_title');
+            $table->string('poster_path');
+            $table->longText('overview')->nullable();
+            $table->date('release_date');
             $table->enum('rating', [0, 1, 2, 3])->default(0);
             $table->foreignIdFor(User::class)->nullable()->constrained()->cascadeOnDelete();
             $table->timestamps();
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('movieReviews');
+        Schema::dropIfExists('movies');
     }
 };

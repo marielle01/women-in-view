@@ -174,6 +174,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Default user
+    |--------------------------------------------------------------------------
+    |
+    | This user is used for unit tests and providing default token
+    |
+    */
+
+    'user_email' => env('USER_SUPPORT_EMAIL'),
+    'user_password' => env('USER_SUPPORT_PASSWORD'),
+    'user_firstName' => env('USER_SUPPORT_FIRSTNAME'),
+    'user_lastName' => env('USER_SUPPORT_LASTNAME'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Class Aliases
     |--------------------------------------------------------------------------
     |
@@ -186,5 +200,7 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
+
+    'log_path' => 'var/www/html/storage/logs'
 
 ];
