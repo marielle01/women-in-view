@@ -3,18 +3,23 @@
 namespace App\Repositories\Api\V1;
 
 use App\Models\Api\V1\User;
+use Illuminate\Support\Facades\DB;
 
 class UserRepository
 {
     public function create(array $data): User
     {
-        $user = new User();
+        return DB::transaction(function () use ($data) {
 
-        $user->fill($data);
+            $user = new User();
 
-        $user->save();
+            $user->fill($data);
 
-        return $user;
+            $user->save();
+
+            return $user;
+
+        });
     }
 
     public function update(array $data, User $user): User

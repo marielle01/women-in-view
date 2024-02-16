@@ -3,11 +3,10 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\BaseController;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\StoreMovieRequest;
+use App\Http\Requests\Api\V1\UpdateMovieRequest;
 use App\Http\Resources\Api\V1\MovieResource;
 use App\Models\Api\V1\Movie;
-use App\Models\Api\V1\User;
 use App\Repositories\Api\V1\MovieRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,8 +16,6 @@ class MovieController extends BaseController
 {
     public function __construct(protected MovieRepository $movieRepository)
     {
-        $this->authorizeResource(Movie::class, 'movie');
-
     }
 
     /**
@@ -26,8 +23,8 @@ class MovieController extends BaseController
      */
     public function index(): JsonResponse
     {
-        $movies = MovieResource::collection(Movie::all());
-        return $this->sendResponse($movies);
+        $movies = Movie::all();
+        return $this->sendResponse(MovieResource::collection($movies));
     }
 
     /**
@@ -35,8 +32,10 @@ class MovieController extends BaseController
      */
     public function store(StoreMovieRequest $request): JsonResponse
     {
+        //$movie = $this->movieService->create($request->input());
         $movie = $this->movieRepository->create($request->validated());
-        return $this->sendResponse(new MovieResource($movie));
+
+        return $this->sendResponse(new MovieResource($movie), 'Movie added successfully.');
     }
 
     /**
@@ -50,9 +49,11 @@ class MovieController extends BaseController
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Movie $movie)
+    public function update(UpdateMovieRequest $request, Movie $movie): JsonResponse
     {
-        //
+        $movie = $this->movieRepository->update($request->validated(), $movie);
+
+        return $this->sendResponse($movie, 'Movie updated successfully.');
     }
 
     /**

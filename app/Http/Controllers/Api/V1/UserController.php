@@ -6,15 +6,18 @@ use App\Http\Controllers\BaseController;
 use App\Http\Requests\Api\V1\StoreUserRequest;
 use App\Http\Resources\Api\V1\UserResource;
 use App\Models\Api\V1\User;
-use App\Services\UserService;
+use App\Repositories\Api\V1\UserRepository;
+use App\Services\Api\V1\UserService;
+use http\Env\Request;
 use Illuminate\Http\JsonResponse;
 
 class UserController extends BaseController
 {
-    public function __construct(protected UserService $userService)
+    public function __construct(
+        protected UserService $userService,
+        protected UserRepository $userRepository
+    )
     {
-        $this->authorizeResource(User::class, 'user');
-
     }
     /**
      * Display a listing of the resource.
@@ -32,9 +35,9 @@ class UserController extends BaseController
     public function store(StoreUserRequest $request): JsonResponse
     {
         // Create a new user using the UserService.
-        $user = $this->userService->create($request->validated());
+        $user = $this->userRepository->create($request->validated());
         // Return the response with the created user resource.
-        return $this->sendResponse(new UserResource($user));
+        return $this->sendResponse(new UserResource($user), 'User added successfully.');
     }
 
     /**
@@ -52,7 +55,7 @@ class UserController extends BaseController
     public function update(StoreUserRequest $request, User $user): JsonResponse
     {
         // Update the user using the UserService.
-        $this->userService->update($request->validated(), $user);
+        $this->userRepository->update($request->validated(), $user);
         // Return the response with the updated user.
         return $this->sendResponse($user, 'User updated successfully.');
     }

@@ -30,10 +30,6 @@ class Movie extends Model
         'updated_at',
     ];
 
-    protected $attributes = [
-        //'rating' => 0
-    ];
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

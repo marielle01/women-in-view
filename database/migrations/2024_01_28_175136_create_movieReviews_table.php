@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('original_title');
             $table->string('poster_path');
             $table->longText('overview')->nullable();
-            $table->date('release_date');
+            $table->date('release_date')->nullable();
             $table->enum('rating', [0, 1, 2, 3])->default(0);
             $table->foreignIdFor(User::class)->nullable()->constrained()->cascadeOnDelete();
             $table->timestamps();

@@ -1,11 +1,14 @@
 <?php
 
-namespace App\Repositories\Api\V1;
+namespace App\Services\Api\V1;
 
 use App\Models\Api\V1\Movie;
 use Illuminate\Support\Facades\DB;
 
-class MovieRepository
+/**
+ * Class movieService.
+ */
+class MovieService
 {
     public function create(array $data): Movie
     {
@@ -32,3 +35,4 @@ class MovieRepository
         return $movie;
     }
 }
+
