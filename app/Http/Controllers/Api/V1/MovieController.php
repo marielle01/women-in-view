@@ -32,7 +32,6 @@ class MovieController extends BaseController
      */
     public function store(StoreMovieRequest $request): JsonResponse
     {
-        //$movie = $this->movieService->create($request->input());
         $movie = $this->movieRepository->create($request->validated());
 
         return $this->sendResponse(new MovieResource($movie), 'Movie added successfully.');
@@ -91,5 +90,22 @@ class MovieController extends BaseController
             config('services.tmdb.token')
         )->get('https://api.themoviedb.org/3/movie/popular')->json();
         return $this->sendResponse($movies);
+    }
+
+    public function searchMovie(Request $request): JsonResponse
+    {
+        // search input
+        $movie = $request->get('movie_name');
+
+        // search all movies whose original title starts with that match with wildcard character
+        $search1 = Movie::where('original_title','like','%'.$movie)->get();
+        // search all movies whose original title ends with that match with wildcard character
+        $search2 = Movie::where('original_title','like',$movie.'%')->get();
+        $search3 = Movie::where('original_title','like','%'.$movie.'%')->get();
+
+        $search =  $search1->merge( $search2, $search3);
+
+        return $this->sendResponse($search);
+
     }
 }

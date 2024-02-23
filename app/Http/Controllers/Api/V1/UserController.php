@@ -34,7 +34,7 @@ class UserController extends BaseController
      */
     public function store(StoreUserRequest $request): JsonResponse
     {
-        // Create a new user using the UserService.
+        // Create a new user using the UserRepository.
         $user = $this->userRepository->create($request->validated());
         // Return the response with the created user resource.
         return $this->sendResponse(new UserResource($user), 'User added successfully.');
@@ -54,9 +54,8 @@ class UserController extends BaseController
      */
     public function update(StoreUserRequest $request, User $user): JsonResponse
     {
-        // Update the user using the UserService.
+        // Update the user using the UserRepository.
         $this->userRepository->update($request->validated(), $user);
-        // Return the response with the updated user.
         return $this->sendResponse($user, 'User updated successfully.');
     }
 
@@ -65,7 +64,6 @@ class UserController extends BaseController
      */
     public function destroy(User $user): JsonResponse
     {
-        // Delete the user from the database.
         $user->delete();
         // Return the response indicating that the user has been deleted.
         return $this->sendResponse('user deleted successfully');

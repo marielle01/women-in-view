@@ -27,20 +27,20 @@ class StoreUserRequest extends FormRequest
             'name' => [
                 'required',
                 'string',
-                'max:255',
+                'max:255'
             ],
             'email' => [
                 'required',
                 'string',
                 'email',
                 'max:255',
-                Rule::unique(User::class),
+                Rule::unique(User::class)
             ],
             'password' => [
                 'required',
                 'string',
-                'regex:/^(?=.*?[a-zA-Z])(?=.*?[0-9])(=.*?[#?!@$%^&*-]){0,}.{8,}$/',
-            ],
+                'regex:/^(?=.*?[a-zA-Z])(?=.*?[0-9])(=.*?[#?!@$%^&*-]){0,}.{8,}$/'
+            ]
         ];
     }
 }

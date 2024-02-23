@@ -22,26 +22,37 @@ class StoreMovieRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'imdb_id' => [
-                'integer'
+            'tmdb_id' => [
+                'integer',
+                'required',
             ],
             'original_title' => [
-                'string'
+                'string',
+                'required',
             ],
             'poster_path' => [
-                'string'
+                'string',
+                'required',
+            ],
+            'backdrop_path' => [
+                'string',
+                'required',
             ],
             'overview' => [
-                'string'
+                'string',
+                'required',
             ],
             'release_date' => [
-                'date'
+                'date',
+                'required',
             ],
             'user_id' => [
-                'integer'
+                'integer',
+                'required',
             ],
             'rating' => [
-                'integer'
+                'integer',
+                'required',
             ],
         ];
     }

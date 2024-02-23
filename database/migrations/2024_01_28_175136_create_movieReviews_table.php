@@ -14,13 +14,14 @@ return new class extends Migration
     {
         Schema::create('movies', function (Blueprint $table) {
             $table->id();
-            $table->string('imdb_id')->nullable()->unique();
+            $table->string('tmdb_id')->unique();
             $table->string('original_title');
             $table->string('poster_path');
-            $table->longText('overview')->nullable();
-            $table->date('release_date')->nullable();
-            $table->enum('rating', [0, 1, 2, 3])->default(0);
-            $table->foreignIdFor(User::class)->nullable()->constrained()->cascadeOnDelete();
+            $table->string('backdrop_path');
+            $table->longText('overview');
+            $table->date('release_date');
+            $table->enum('rating', [0, 1, 2, 3]);
+            $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
