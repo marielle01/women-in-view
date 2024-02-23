@@ -14,13 +14,13 @@ return new class extends Migration
     {
         Schema::create('movies', function (Blueprint $table) {
             $table->id();
-            $table->string('tmdb_id')->unique();
+            $table->integer('tmdb_id')->unique();
             $table->string('original_title');
             $table->string('poster_path');
             $table->string('backdrop_path');
             $table->longText('overview');
             $table->date('release_date');
-            $table->enum('rating', [0, 1, 2, 3]);
+            $table->integer('rating');
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->timestamps();
         });

@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Api\V1;
 
+use App\Models\Api\V1\Movie;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreMovieRequest extends FormRequest
 {
@@ -24,35 +26,28 @@ class StoreMovieRequest extends FormRequest
         return [
             'tmdb_id' => [
                 'integer',
-                'required',
+                Rule::unique(Movie::class)
             ],
             'original_title' => [
-                'string',
-                'required',
+                'string'
             ],
             'poster_path' => [
-                'string',
-                'required',
+                'string'
             ],
             'backdrop_path' => [
-                'string',
-                'required',
+                'string'
             ],
             'overview' => [
-                'string',
-                'required',
+                'string'
             ],
             'release_date' => [
-                'date',
-                'required',
+                'date'
             ],
             'user_id' => [
-                'integer',
-                'required',
+                'integer'
             ],
             'rating' => [
-                'integer',
-                'required',
+                'integer'
             ],
         ];
     }
