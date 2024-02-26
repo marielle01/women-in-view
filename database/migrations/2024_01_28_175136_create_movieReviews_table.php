@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('movies', function (Blueprint $table) {
             $table->id();
-            $table->integer('tmdb_id')->unique();
+            $table->bigInteger('tmdb_id')->unique();
             $table->string('original_title');
             $table->string('poster_path');
             $table->string('backdrop_path');
