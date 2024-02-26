@@ -4,17 +4,15 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\BaseController;
 use App\Http\Requests\Api\V1\StoreUserRequest;
+use App\Http\Requests\Api\V1\UpdateUserRequest;
 use App\Http\Resources\Api\V1\UserResource;
 use App\Models\Api\V1\User;
 use App\Repositories\Api\V1\UserRepository;
-use App\Services\Api\V1\UserService;
-use http\Env\Request;
 use Illuminate\Http\JsonResponse;
 
 class UserController extends BaseController
 {
     public function __construct(
-        protected UserService $userService,
         protected UserRepository $userRepository
     )
     {
@@ -52,7 +50,7 @@ class UserController extends BaseController
     /**
      * Update the specified resource in storage.
      */
-    public function update(StoreUserRequest $request, User $user): JsonResponse
+    public function update(UpdateUserRequest $request, User $user): JsonResponse
     {
         // Update the user using the UserRepository.
         $this->userRepository->update($request->validated(), $user);

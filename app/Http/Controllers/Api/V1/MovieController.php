@@ -108,4 +108,12 @@ class MovieController extends BaseController
         return $this->sendResponse($search);
 
     }
+
+    public function getSearchMovies(): JsonResponse
+    {
+        $movies = Http::withToken(
+            config('services.tmdb.token')
+        )->get('https://api.themoviedb.org/3/search/movie')->json();
+        return $this->sendResponse($movies);
+    }
 }

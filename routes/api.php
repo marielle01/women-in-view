@@ -38,6 +38,7 @@ Route::middleware(['auth:sanctum'])->group(function() {
 
 // Search Route
 Route::get('/search-movies', [MovieController::class, 'searchMovie'])->middleware('auth:sanctum');
+Route::get('/search-moviesTmbd', [MovieController::class, 'getSearchMovies']);
 
 
 Route::post('/db-seed-movies', [MovieController::class, 'dbSeedMovie']);
