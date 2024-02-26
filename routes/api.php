@@ -1,12 +1,9 @@
 <?php
 
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\V1\PermissionController;
-use App\Http\Controllers\Api\V1\RoleController;
+use App\Http\Controllers\Api\V1\AuthController;
+use App\Http\Controllers\Api\V1\MovieController;
 use App\Http\Controllers\Api\V1\UserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\V1\MovieReviewController;
-use App\Http\Controllers\Api\V1\ReviewController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,31 +16,30 @@ use App\Http\Controllers\Api\V1\ReviewController;
 |
 */
 
-Route::get('user', [AuthController::class, 'user']);
 
 // Authentication
-Route::post('/register', [AuthController::class, 'createUser'])->middleware('guest');
-Route::post('/login', [AuthController::class, 'loginUser']);
+Route::post('/register', [AuthController::class, 'register'])->middleware('guest');
+Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 // Password Routes
-Route::post('/users/forgot-password', [UserController::class, 'forgotPassword']);
-Route::post('/users/reset-password', [UserController::class, 'resetPassword']);
-Route::post('/users/change-password', [UserController::class, 'changePassword'])
-    ->middleware('auth:sanctum');
-
-
-// Roles and Permissions
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function() {
-    Route::get('/admin', [UserController::class, 'index']);
-    Route::resource('/roles', RoleController::class);
-    Route::resource('/permissions', PermissionController::class);
-});
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+Route::post('/change-password', [AuthController::class, 'changePassword'])->middleware('auth:sanctum');
 
 
 // CRUD
-Route::resources([
-    'users' => UserController::class,
-    'movies' => MovieReviewController::class,
-    'review' => ReviewController::class,
-]);
+Route::middleware(['auth:sanctum'])->group(function() {
+    Route::resources([
+        'users' => UserController::class,
+        'movies' => MovieController::class,
+    ]);
+});
+
+// Search Route
+Route::get('/search-movies', [MovieController::class, 'searchMovie'])->middleware('auth:sanctum');
+Route::get('/search-moviesTmbd', [MovieController::class, 'getSearchMovies']);
+
+
+Route::post('/db-seed-movies', [MovieController::class, 'dbSeedMovie']);
+Route::get('/popular-movies', [MovieController::class, 'getPopularMovies']);

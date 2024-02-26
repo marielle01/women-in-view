@@ -6,17 +6,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class MovieReview extends Model
+class Movie extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'tmdbId',
-        'title',
-        'posterPath',
-        'synopsis',
-        'year',
-        'user_id'
+        'tmdb_id',
+        'original_title',
+        'poster_path',
+        'backdrop_path',
+        'overview',
+        'release_date',
+        'user_id',
+        'rating',
     ];
 
     /**
@@ -27,10 +29,6 @@ class MovieReview extends Model
     protected $hidden = [
         'created_at',
         'updated_at',
-    ];
-
-    protected $attributes = [
-        'rating' => 0
     ];
 
     public function user(): BelongsTo

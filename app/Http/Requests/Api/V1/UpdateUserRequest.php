@@ -2,11 +2,12 @@
 
 namespace App\Http\Requests\Api\V1;
 
+use App\Http\Requests\AppFormRequest;
 use App\Models\Api\V1\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateUserRequest extends FormRequest
+class UpdateUserRequest extends AppFormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

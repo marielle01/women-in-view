@@ -1,12 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Api\V1;
+namespace App\Http\Requests\Auth;
 
-use App\Rules\ConfirmPassword;
-use App\Rules\CurrentPassword;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ChangePasswordRequest extends FormRequest
+class LoginUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,21 +22,16 @@ class ChangePasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'currentPassword' => [
+            'email' => [
                 'required',
                 'string',
-                new CurrentPassword(),
+                'email',
             ],
             'password' => [
                 'required',
                 'string',
-                'regex:/^(?=.*?[a-zA-Z])(?=.*?[0-9])(=.*?[#?!@$%^&*-]){0,}.{8,}$/',
+                'min:8'
             ],
-            'confirmPassword' => [
-                'required',
-                'string',
-                new ConfirmPassword(),
-            ]
         ];
     }
 }
