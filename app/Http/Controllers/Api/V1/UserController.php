@@ -9,6 +9,8 @@ use App\Http\Resources\Api\V1\UserResource;
 use App\Models\Api\V1\User;
 use App\Repositories\Api\V1\UserRepository;
 use Illuminate\Http\JsonResponse;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class UserController extends BaseController
 {
@@ -16,6 +18,10 @@ class UserController extends BaseController
         protected UserRepository $userRepository
     )
     {
+        $this->middleware('permission:view users',['only' => ['index']]);
+        $this->middleware('permission:create users',['only' => ['create']]);
+        $this->middleware('permission:update users',['only' => ['update']]);
+        $this->middleware('permission:delete users',['only' => ['destroy']]);
     }
     /**
      * Display a listing of the resource.

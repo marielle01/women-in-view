@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\MovieController;
 use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\V1\PermissionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,8 +34,24 @@ Route::middleware(['auth:sanctum'])->group(function() {
     Route::resources([
         'users' => UserController::class,
         'movies' => MovieController::class,
+        'permissions' => PermissionController::class,
     ]);
 });
+
+/*Route::group(['middleware' => ['role:subscriber'], ['auth:sanctum']],function() {
+    Route::resources([
+        'users' => UserController::class,
+        'movies' => MovieController::class,
+    ]);
+});*/
+
+/*Route::group(['middleware' => ['role:admin'], ['auth:sanctum']],function() {
+    Route::resources([
+        'movies' => MovieController::class,
+        'users' => UserController::class,
+    ]);
+});*/
+
 
 // Search Route
 Route::get('/search-movies', [MovieController::class, 'searchMovie'])->middleware('auth:sanctum');

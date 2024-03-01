@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -47,10 +49,16 @@ class User extends Authenticatable
     ];
 
     /**
-     * @return BelongsToMany
+     * @return HasMany
      */
     public function movie(): HasMany
     {
         return $this->hasMany(Movie::class);
     }
+
+    protected function getDefaultGuardName(): string
+    {
+        return 'api';
+    }
+
 }

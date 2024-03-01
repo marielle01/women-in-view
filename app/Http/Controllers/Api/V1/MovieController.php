@@ -11,11 +11,16 @@ use App\Repositories\Api\V1\MovieRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class MovieController extends BaseController
 {
     public function __construct(protected MovieRepository $movieRepository)
     {
+        //$this->middleware(['role:visitor', 'permission: viewMovies|createMovies|updateMovies']);
+        //$this->middleware(['role:admin']);
+        $this->authorizeResource(Movie::class);
     }
 
     /**

@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Enums\RoleEnum;
+use App\Models\Api\V1\Movie;
+use App\Policies\Api\V1\MoviePolicy;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
@@ -15,7 +17,8 @@ class AuthServiceProvider extends ServiceProvider
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        // 'App\Models\Model' => 'App\Policies\ModelPolicy',
+        Movie::class => MoviePolicy::class,
+
     ];
 
     /**
@@ -32,7 +35,7 @@ class AuthServiceProvider extends ServiceProvider
         // Implicitly grant "Super Admin" role all permissions
         // This works in the app by using gate-related functions like auth()->user->can() and @can()
         Gate::before(function ($user, $ability) {
-            return $user->hasRole(RoleEnum::SUPER_ADMIN->value) ? true : null;
+            return $user->hasRole('super admin') ? true : null;
         });
     }
 }
