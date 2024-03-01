@@ -54,7 +54,7 @@ class UserController extends BaseController
     {
         // Update the user using the UserRepository.
         $this->userRepository->update($request->validated(), $user);
-        return $this->sendResponse($user, 'User updated successfully.');
+        return $this->sendResponse(new UserResource($user), 'User updated successfully.');
     }
 
     /**
