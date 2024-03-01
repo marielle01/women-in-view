@@ -19,6 +19,7 @@ class MovieResource extends JsonResource
             'tmdb_id'=> $this->tmdb_id,
             'original_title' => $this->original_title,
             'poster_path' => $this->poster_path,
+            'backdrop_path' => $this->backdrop_path,
             'overview' => $this->overview,
             'release_date' => $this->release_date,
             'rating' => $this->rating,
