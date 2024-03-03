@@ -9,8 +9,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 class Movie extends Model
 {
-    use HasFactory;
-    use HasRoles;
+    use HasFactory, HasRoles;
 
     protected $fillable = [
         'tmdb_id',

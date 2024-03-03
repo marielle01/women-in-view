@@ -15,7 +15,7 @@ class UserRepository
 
             $user->fill($data);
 
-            $user->save();
+            $user-> save();
 
             return $user;
 

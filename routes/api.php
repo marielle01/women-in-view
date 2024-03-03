@@ -45,7 +45,14 @@ Route::middleware(['auth:sanctum'])->group(function() {
     ]);
 });*/
 
-/*Route::group(['middleware' => ['role:admin'], ['auth:sanctum']],function() {
+/*Route::group(['middleware' => ['auth:sanctum', 'role:admin']],function() {
+    Route::resources([
+        'movies' => MovieController::class,
+        'users' => UserController::class,
+    ]);
+});
+
+Route::group(['middleware' => ['auth:sanctum', 'role:admin|subscribe']],function() {
     Route::resources([
         'movies' => MovieController::class,
         'users' => UserController::class,
@@ -57,6 +64,8 @@ Route::middleware(['auth:sanctum'])->group(function() {
 Route::get('/search-movies', [MovieController::class, 'searchMovie'])->middleware('auth:sanctum');
 Route::get('/search-moviesTmbd', [MovieController::class, 'getSearchMovies']);
 
+// Dashboard
+Route::get('user-movies/{user_id}', [MovieController::class, 'getUserMovies']);
 
 Route::post('/db-seed-movies', [MovieController::class, 'dbSeedMovie']);
 Route::get('/popular-movies', [MovieController::class, 'getPopularMovies']);

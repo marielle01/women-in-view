@@ -6,29 +6,35 @@ use App\Http\Controllers\BaseController;
 use App\Http\Requests\Api\V1\StoreMovieRequest;
 use App\Http\Requests\Api\V1\UpdateMovieRequest;
 use App\Http\Resources\Api\V1\MovieResource;
+use App\Http\Resources\Api\V1\UserMovieResource;
 use App\Models\Api\V1\Movie;
+use App\Models\Api\V1\User;
 use App\Repositories\Api\V1\MovieRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class MovieController extends BaseController
 {
     public function __construct(protected MovieRepository $movieRepository)
     {
-        //$this->middleware(['role:visitor', 'permission: viewMovies|createMovies|updateMovies']);
+        //$this->middleware(['role:subscriber', 'permission: index_movies|view_movies|create_movies|update_movies']);
         //$this->middleware(['role:admin']);
-        $this->authorizeResource(Movie::class);
+        //$this->authorizeResource(Movie::class, 'movie');
     }
 
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $movies = Movie::all();
+        $movies = QueryBuilder::for(Movie::class)
+            ->orderByDesc('updated_at')
+            ->paginate(6);
+
         return $this->sendResponse(MovieResource::collection($movies));
     }
 
@@ -67,6 +73,16 @@ class MovieController extends BaseController
     {
         $movie->delete();
         return $this->sendResponse('Movie deleted successfully');
+    }
+
+
+    public function getUserMovies($userId): JsonResponse
+    {
+        // Get all movies linked to the specified user
+        $movies = Movie::where('user_id', $userId)->get();
+
+        return response()->json($movies);
+
     }
 
     public function dbSeedMovie(): JsonResponse

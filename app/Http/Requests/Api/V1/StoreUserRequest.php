@@ -43,6 +43,9 @@ class StoreUserRequest extends AppFormRequest
                 'string',
                 'regex:/^(?=.*?[a-zA-Z])(?=.*?[0-9]){0,}.{8,}$/',
             ],
+            'role_id' => [
+                'exists:\Spatie\Permission\Models\Role,id'
+            ]
         ];
 
     }

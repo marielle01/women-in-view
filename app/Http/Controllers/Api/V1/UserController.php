@@ -11,6 +11,7 @@ use App\Repositories\Api\V1\UserRepository;
 use Illuminate\Http\JsonResponse;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class UserController extends BaseController
 {
@@ -18,19 +19,18 @@ class UserController extends BaseController
         protected UserRepository $userRepository
     )
     {
-        $this->middleware('permission:view users',['only' => ['index']]);
-        $this->middleware('permission:create users',['only' => ['create']]);
-        $this->middleware('permission:update users',['only' => ['update']]);
-        $this->middleware('permission:delete users',['only' => ['destroy']]);
+        //$this->authorizeResource(User::class, 'user');
     }
     /**
      * Display a listing of the resource.
      */
-    public function index(): \Illuminate\Database\Eloquent\Collection
+    public function index(): JsonResponse
     {
-        /*$users = UserResource::collection(User::all());
-        return $this->sendResponse($users);*/
-        return User::all();
+        $users = QueryBuilder::for(User::class)
+            ->orderByDesc('updated_at')
+            ->paginate(6);
+
+        return  $this->sendResponse(UserResource::collection($users));
     }
 
     /**
