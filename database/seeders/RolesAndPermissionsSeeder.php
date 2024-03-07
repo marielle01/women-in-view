@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\RoleEnum;
+use App\Models\Api\V1\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -50,7 +51,10 @@ class RolesAndPermissionsSeeder extends Seeder
             'view_movies',
             'create_movies',
             'update_movies',
+            'create_users',
         ]);
 
+        $user = User::find(1);
+        $user->hasAllRoles(Role::all());
     }
 }

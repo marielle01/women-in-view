@@ -4,18 +4,19 @@ namespace App\Models\Api\V1;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Traits\HasRoles;
+use App\Models\Api\V1\Role;
+
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable;
+
 
     /**
      * The attributes that are mass assignable.
@@ -26,7 +27,6 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role_id',
     ];
 
     /**
@@ -51,15 +51,6 @@ class User extends Authenticatable
 
 
     /**
-     * The model's default values for attributes.
-     *
-     * @var array<string, mixed>
-     */
-    protected $attributes = [
-        'role_id' => 2,
-    ];
-
-    /**
      * @return HasMany
      */
     public function movie(): HasMany
@@ -67,9 +58,27 @@ class User extends Authenticatable
         return $this->hasMany(Movie::class);
     }
 
-    protected function getDefaultGuardName(): string
+    public function role(): BelongsTo
     {
-        return 'api';
+        return $this->belongsTo(Role::class)
+            ->with('permissions', function ($item) {
+                return $item->get(['id', 'name']);
+            });
+    }
+
+    public function getAllowedPermissions($permissionName): array
+    {
+        $allowedPermissions = [];
+
+        $role = $this->role()->first();
+
+        if ($role === null) {
+            return $allowedPermissions;
+        }
+        foreach ($role->permissions()->get() as $permission) {
+            $allowedPermissions[$permission->name] = $permission->name;
+        }
+        return $allowedPermissions;
     }
 
 }

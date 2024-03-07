@@ -4,8 +4,7 @@ namespace App\Policies\Api\V1;
 
 use App\Models\Api\V1\Movie;
 use App\Models\Api\V1\User;
-use Illuminate\Auth\Access\Response;
-use Spatie\Permission\Traits\HasPermissions;
+use App\Traits\HasPermissions;
 
 class MoviePolicy
 {
@@ -16,8 +15,7 @@ class MoviePolicy
      */
     public function viewAny(User $user): bool
     {
-        //return true;
-        return $this->hasPermissionTo('index_movies');
+        return $this->can('viewAnyMovies');
     }
 
     /**
@@ -25,7 +23,7 @@ class MoviePolicy
      */
     public function view(User $user, Movie $movie): bool
     {
-        return $this->hasPermissionTo('view_movies');
+        return $this->can('viewMovies');
     }
 
     /**
@@ -33,8 +31,7 @@ class MoviePolicy
      */
     public function create(User $user): bool
     {
-        //return true;
-        return $this->hasPermissionTo('create_movies');
+        return $this->can('createMovies');
     }
 
     /**
@@ -42,7 +39,7 @@ class MoviePolicy
      */
     public function update(User $user, Movie $movie): bool
     {
-        return $this->hasPermissionTo('update_movies');
+        return $this->can('updateMovies');
     }
 
     /**
@@ -50,7 +47,7 @@ class MoviePolicy
      */
     public function delete(User $user, Movie $movie): bool
     {
-        return $this->hasPermissionTo('delete_movies');
+        return $this->can('deleteMovies');
     }
 
     /**

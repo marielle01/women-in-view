@@ -3,7 +3,8 @@
 namespace App\Repositories\Api\V1;
 
 use App\Models\Api\V1\Movie;
-use Illuminate\Http\JsonResponse;
+use App\Models\Api\V1\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class MovieRepository
@@ -15,6 +16,8 @@ class MovieRepository
             $movie = new Movie();
 
             $movie->fill($data);
+
+            $movie->user()->associate(auth()->user());
 
             $movie->save();
 

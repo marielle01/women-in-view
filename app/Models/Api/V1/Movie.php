@@ -5,11 +5,16 @@ namespace App\Models\Api\V1;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasPermissions;
 use Spatie\Permission\Traits\HasRoles;
 
 class Movie extends Model
 {
-    use HasFactory, HasRoles;
+    use HasFactory, HasRoles, HasPermissions;
+
+    protected $guard_name = 'api';
 
     protected $fillable = [
         'tmdb_id',

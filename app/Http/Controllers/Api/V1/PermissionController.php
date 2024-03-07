@@ -8,7 +8,7 @@ use App\Repositories\Api\V1\PermissionRepository;
 
 class PermissionController extends Controller
 {
-    public function __construct(protected PermissionRepository $permissionRepository)
+    public function __construct()
     {
 
     }
@@ -19,9 +19,7 @@ class PermissionController extends Controller
 
     public function store(StorePermissionRequest $request)
     {
-        $permission = $this->permissionRepository->create($request->validated());
 
-        return $this->sendResponse(new PermissionResource($permission), 'Permission added successfully.');
     }
 
     public function show()

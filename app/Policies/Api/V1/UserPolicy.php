@@ -3,30 +3,28 @@
 namespace App\Policies\Api\V1;
 
 use App\Models\Api\V1\User;
+use App\Traits\HasPermissions;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use Illuminate\Auth\Access\Response;
-use Spatie\Permission\Traits\HasPermissions;
 
 class UserPolicy
 {
+
     use HasPermissions;
-    use HandlesAuthorization;
 
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return $this->hasPermissionTo('index_users');
-        //return true;
+        return $this->can('viewAnyUsers');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, User $model): bool
+    public function view(User $user): bool
     {
-        return $this->hasPermissionTo('view_users');
+        return $this->can('viewUsers');
     }
 
     /**
@@ -34,11 +32,7 @@ class UserPolicy
      */
     public function create(User $user): bool
     {
-        //return $this->hasPermissionTo('create_users');
-        /*if($user->can('create_users')){
-            return true;
-        }*/
-        return true;
+        return $this->can('createUsers');
     }
 
     /**
@@ -46,7 +40,7 @@ class UserPolicy
      */
     public function update(User $user, User $model): bool
     {
-        return $this->hasPermissionTo('update_users');
+        return $this->can('updateUsers');
     }
 
     /**
@@ -54,7 +48,7 @@ class UserPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        return $this->hasPermissionTo('delete_users');
+        return $this->can('deleteUsers');
     }
 
     /**

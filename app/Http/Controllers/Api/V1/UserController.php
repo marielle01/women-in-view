@@ -19,7 +19,7 @@ class UserController extends BaseController
         protected UserRepository $userRepository
     )
     {
-        //$this->authorizeResource(User::class, 'user');
+        $this->authorizeResource(User::class, 'user');
     }
     /**
      * Display a listing of the resource.
