@@ -3,17 +3,19 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\BaseController;
-use App\Http\Requests\StoreUserRequest;
-use App\Http\Resources\UserResource;
-use App\Models\User;
-use App\Services\UserService;
+use App\Http\Requests\Api\V1\StoreUserRequest;
+use App\Http\Requests\Api\V1\UpdateUserRequest;
+use App\Http\Resources\Api\V1\UserResource;
+use App\Models\Api\V1\User;
+use App\Repositories\Api\V1\UserRepository;
 use Illuminate\Http\JsonResponse;
 
 class UserController extends BaseController
 {
-    public function __construct(protected UserService $userService)
+    public function __construct(
+        protected UserRepository $userRepository
+    )
     {
-
     }
     /**
      * Display a listing of the resource.
@@ -30,8 +32,10 @@ class UserController extends BaseController
      */
     public function store(StoreUserRequest $request): JsonResponse
     {
-        $user = $this->userService->create($request->validated());
-        return $this->sendResponse(new UserResource($user));
+        // Create a new user using the UserRepository.
+        $user = $this->userRepository->create($request->validated());
+        // Return the response with the created user resource.
+        return $this->sendResponse(new UserResource($user), 'User added successfully.');
     }
 
     /**
@@ -39,16 +43,18 @@ class UserController extends BaseController
      */
     public function show(User $user): JsonResponse
     {
+        // Return the response with the specified user resource.
         return $this->sendResponse(new UserResource($user), 'User retrieved successfully.');
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(StoreUserRequest $request, User $user): JsonResponse
+    public function update(UpdateUserRequest $request, User $user): JsonResponse
     {
-        $this->userService->update($request->validated(), $user);
-        return $this->sendResponse($user, 'User updated successfully.');
+        // Update the user using the UserRepository.
+        $this->userRepository->update($request->validated(), $user);
+        return $this->sendResponse(new UserResource($user), 'User updated successfully.');
     }
 
     /**
@@ -57,6 +63,7 @@ class UserController extends BaseController
     public function destroy(User $user): JsonResponse
     {
         $user->delete();
+        // Return the response indicating that the user has been deleted.
         return $this->sendResponse('user deleted successfully');
     }
 

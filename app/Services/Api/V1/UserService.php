@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Api\V1;
 
-use App\Models\User;
+use App\Models\Api\V1\User;
 
 /**
  * Class UserService.

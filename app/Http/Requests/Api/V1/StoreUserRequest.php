@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Api\V1;
 
-use App\Models\User;
+use App\Http\Requests\AppFormRequest;
+use App\Models\Api\V1\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateUserRequest extends FormRequest
+class StoreUserRequest extends AppFormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,23 +24,26 @@ class UpdateUserRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
             'name' => [
                 'required',
                 'string',
-                'max:255',
+                'max:255'
             ],
             'email' => [
+                'required',
                 'string',
                 'email',
                 'max:255',
-                Rule::unique(User::class),
+                Rule::unique(User::class)
             ],
             'password' => [
                 'required',
                 'string',
-                'regex:/^(?=.*?[a-zA-Z])(?=.*?[0-9])(=.*?[#?!@$%^&*-]){0,}.{8,}$/',
+                'regex:/^(?=.*?[a-zA-Z])(?=.*?[0-9]){0,}.{8,}$/',
             ],
         ];
+
     }
 }
