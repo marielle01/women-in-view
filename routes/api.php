@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\MovieController;
 use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\V1\PermissionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,6 +40,9 @@ Route::middleware(['auth:sanctum'])->group(function() {
 Route::get('/search-movies', [MovieController::class, 'searchMovie'])->middleware('auth:sanctum');
 Route::get('/search-moviesTmbd', [MovieController::class, 'getSearchMovies']);
 
+// Dashboard users
+Route::get('user-movies/{user_id}', [MovieController::class, 'getUserMovies']);
 
+// tmdb api
 Route::post('/db-seed-movies', [MovieController::class, 'dbSeedMovie']);
 Route::get('/popular-movies', [MovieController::class, 'getPopularMovies']);

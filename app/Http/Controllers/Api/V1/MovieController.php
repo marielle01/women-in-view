@@ -6,25 +6,36 @@ use App\Http\Controllers\BaseController;
 use App\Http\Requests\Api\V1\StoreMovieRequest;
 use App\Http\Requests\Api\V1\UpdateMovieRequest;
 use App\Http\Resources\Api\V1\MovieResource;
+use App\Http\Resources\Api\V1\UserMovieResource;
 use App\Models\Api\V1\Movie;
+use App\Models\Api\V1\User;
 use App\Repositories\Api\V1\MovieRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class MovieController extends BaseController
 {
     public function __construct(protected MovieRepository $movieRepository)
     {
+        $this->authorizeResource(Movie::class, 'movie');
     }
 
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        $movies = Movie::all();
-        return $this->sendResponse(MovieResource::collection($movies));
+        $movies = QueryBuilder::for(Movie::class)
+            ->orderByDesc('updated_at')
+            ->paginate(2)
+            ->appends(request()->query());
+
+        return MovieResource::collection($movies);
+        //return $this->sendResponse(MovieResource::collection($movies));
     }
 
     /**
@@ -35,6 +46,7 @@ class MovieController extends BaseController
         $movie = $this->movieRepository->create($request->validated());
 
         return $this->sendResponse(new MovieResource($movie), 'Movie added successfully.');
+
     }
 
     /**
@@ -61,9 +73,37 @@ class MovieController extends BaseController
     public function destroy(Movie $movie): JsonResponse
     {
         $movie->delete();
-        return $this->sendResponse('Movie deleted successfully');
+        return $this->sendResponse('Movie deleted successfully.');
     }
 
+    // search function
+    public function searchMovie(Request $request): JsonResponse
+    {
+        // search input
+        $movie = $request->get('movie_name');
+
+        // search all movies whose original title starts with that match with wildcard character
+        $search1 = Movie::where('original_title','like','%'.$movie)->get();
+        // search all movies whose original title ends with that match with wildcard character
+        $search2 = Movie::where('original_title','like',$movie.'%')->get();
+        $search3 = Movie::where('original_title','like','%'.$movie.'%')->get();
+
+        $search =  $search1->merge( $search2, $search3);
+
+        return $this->sendResponse($search);
+
+    }
+
+    // movies linked to a user
+    public function getUserMovies($userId): JsonResponse
+    {
+        $movies = Movie::where('user_id', $userId)->get();
+        return response()->json($movies);
+    }
+
+
+
+    // tmbd functions
     public function dbSeedMovie(): JsonResponse
     {
         $movies = Http::withToken(
@@ -90,23 +130,6 @@ class MovieController extends BaseController
             config('services.tmdb.token')
         )->get('https://api.themoviedb.org/3/movie/popular')->json();
         return $this->sendResponse($movies);
-    }
-
-    public function searchMovie(Request $request): JsonResponse
-    {
-        // search input
-        $movie = $request->get('movie_name');
-
-        // search all movies whose original title starts with that match with wildcard character
-        $search1 = Movie::where('original_title','like','%'.$movie)->get();
-        // search all movies whose original title ends with that match with wildcard character
-        $search2 = Movie::where('original_title','like',$movie.'%')->get();
-        $search3 = Movie::where('original_title','like','%'.$movie.'%')->get();
-
-        $search =  $search1->merge( $search2, $search3);
-
-        return $this->sendResponse($search);
-
     }
 
     public function getSearchMovies(): JsonResponse

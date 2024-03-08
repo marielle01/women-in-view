@@ -9,6 +9,9 @@ use App\Http\Resources\Api\V1\UserResource;
 use App\Models\Api\V1\User;
 use App\Repositories\Api\V1\UserRepository;
 use Illuminate\Http\JsonResponse;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class UserController extends BaseController
 {
@@ -16,15 +19,19 @@ class UserController extends BaseController
         protected UserRepository $userRepository
     )
     {
+        $this->authorizeResource(User::class, 'user');
     }
     /**
      * Display a listing of the resource.
      */
-    public function index(): \Illuminate\Database\Eloquent\Collection
+    public function index(): JsonResponse
     {
-        /*$users = UserResource::collection(User::all());
-        return $this->sendResponse($users);*/
-        return User::all();
+        $users = QueryBuilder::for(User::class)
+            ->orderByDesc('updated_at')
+            ->paginate(12)
+            ->appends(request()->query());
+
+        return  $this->sendResponse(UserResource::collection($users));
     }
 
     /**

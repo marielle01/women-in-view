@@ -1,25 +1,29 @@
 <?php
 
-namespace App\Policies;
+namespace App\Policies\Api\V1;
 
+use App\Models\Api\V1\Movie;
 use App\Models\Api\V1\User;
+use App\Traits\HasPermissions;
 
-class UserPolicy
+class MoviePolicy
 {
+    use HasPermissions;
+
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return $user->role === 'Super admin'| 'Admin';
+        return $this->can('viewAnyMovies');
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, User $model): bool
+    public function view(User $user, Movie $movie): bool
     {
-        return $user->role === 'Super admin'| 'Admin';
+        return $this->can('viewMovies');
     }
 
     /**
@@ -27,38 +31,38 @@ class UserPolicy
      */
     public function create(User $user): bool
     {
-        return $user->role === 'Super admin'| 'Admin';
+        return $this->can('createMovies');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, User $model): bool
+    public function update(User $user, Movie $movie): bool
     {
-        return $user->role === 'Super admin'| 'Admin';
+        return $this->can('updateMovies');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, User $model): bool
+    public function delete(User $user, Movie $movie): bool
     {
-        return $user->role === 'Super admin';
+        return $this->can('deleteMovies');
     }
 
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, User $model): bool
+    public function restore(User $user, Movie $movie): bool
     {
-        return $user->role === 'Super admin';
+        //
     }
 
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, User $model): bool
+    public function forceDelete(User $user, Movie $movie): bool
     {
-        return $user->role === 'Super admin';
+        //
     }
 }

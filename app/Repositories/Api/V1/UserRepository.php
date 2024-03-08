@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Api\V1;
 
+use App\Models\Api\V1\Role;
 use App\Models\Api\V1\User;
 use Illuminate\Support\Facades\DB;
 
@@ -11,11 +12,13 @@ class UserRepository
     {
         return DB::transaction(function () use ($data) {
 
+            $roleId = Role::where('name', 'subscriber')->first()->id;
+
             $user = new User();
 
             $user->fill($data);
-
-            $user->save();
+            $user->role()->associate($roleId);
+            $user-> save();
 
             return $user;
 

@@ -11,6 +11,7 @@ use App\Http\Resources\Api\V1\UserResource;
 use App\Mail\ConfirmPasswordReset;
 use App\Mail\PasswordResetNotification;
 use App\Models\Api\V1\PasswordResetToken;
+use App\Models\Api\V1\Role;
 use App\Models\Api\V1\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -51,11 +52,14 @@ class AuthController extends BaseController
                 ], 401);
             }
 
+            $roleId = Role::where('name', 'subscriber')->first()->id;
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
             ]);
+            $user->role()->associate($roleId);
+            $user-> save();
 
             return response()->json([
                 'user' => $user,
