@@ -27,7 +27,6 @@ Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::post('/change-password', [AuthController::class, 'changePassword'])->middleware('auth:sanctum');
 
-
 // CRUD
 Route::middleware(['auth:sanctum'])->group(function() {
     Route::resources([
