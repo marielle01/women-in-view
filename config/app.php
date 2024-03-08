@@ -186,8 +186,6 @@ return [
     'user_email' => env('USER_SUPPORT_EMAIL'),
     'user_password' => env('USER_SUPPORT_PASSWORD'),
     'user_name' => env('USER_SUPPORT_NAME'),
-    'user_firstName' => env('USER_SUPPORT_FIRSTNAME'),
-    'user_lastName' => env('USER_SUPPORT_NAME'),
     'user_role' => env('USER_SUPPORT_ROLE'),
     'user_subscriberRole' => env('USER_SUBSCRIBER_ROLE'),
 

@@ -28,7 +28,8 @@ class UserController extends BaseController
     {
         $users = QueryBuilder::for(User::class)
             ->orderByDesc('updated_at')
-            ->paginate(6);
+            ->paginate(12)
+            ->appends(request()->query());
 
         return  $this->sendResponse(UserResource::collection($users));
     }
