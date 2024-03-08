@@ -27,13 +27,15 @@ class MovieController extends BaseController
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         $movies = QueryBuilder::for(Movie::class)
             ->orderByDesc('updated_at')
-            ->paginate(6);
+            ->paginate(2)
+            ->appends(request()->query());
 
-        return $this->sendResponse(MovieResource::collection($movies));
+        return MovieResource::collection($movies);
+        //return $this->sendResponse(MovieResource::collection($movies));
     }
 
     /**
