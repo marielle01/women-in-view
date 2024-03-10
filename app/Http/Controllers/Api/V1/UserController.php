@@ -9,8 +9,6 @@ use App\Http\Resources\Api\V1\UserResource;
 use App\Models\Api\V1\User;
 use App\Repositories\Api\V1\UserRepository;
 use Illuminate\Http\JsonResponse;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class UserController extends BaseController

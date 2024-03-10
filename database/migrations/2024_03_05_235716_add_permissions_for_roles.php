@@ -39,6 +39,7 @@ return new class extends Migration
             ['name' => 'viewMovies'],
             ['name' => 'createMovies'],
             ['name' => 'updateMovies'],
+            ['name' => 'deleteMovies'],
             ['name' => 'viewUsers'],
             ['name' => 'createUsers'],
             ['name' => 'updateUsers'],

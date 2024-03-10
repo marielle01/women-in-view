@@ -6,15 +6,11 @@ use App\Http\Controllers\BaseController;
 use App\Http\Requests\Api\V1\StoreMovieRequest;
 use App\Http\Requests\Api\V1\UpdateMovieRequest;
 use App\Http\Resources\Api\V1\MovieResource;
-use App\Http\Resources\Api\V1\UserMovieResource;
 use App\Models\Api\V1\Movie;
-use App\Models\Api\V1\User;
 use App\Repositories\Api\V1\MovieRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class MovieController extends BaseController
@@ -31,7 +27,7 @@ class MovieController extends BaseController
     {
         $movies = QueryBuilder::for(Movie::class)
             ->orderByDesc('updated_at')
-            ->paginate(2)
+            ->paginate(12)
             ->appends(request()->query());
 
         return MovieResource::collection($movies);
