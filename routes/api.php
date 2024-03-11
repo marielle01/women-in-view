@@ -38,6 +38,7 @@ Route::middleware(['auth:sanctum'])->group(function() {
 
 // Search Route
 Route::get('/search-movies', [MovieController::class, 'searchMovie'])->middleware('auth:sanctum');
+Route::get('/search-movies3', [MovieController::class, 'searchMovie3'])->middleware('auth:sanctum');
 Route::get('/search-moviesTmbd', [MovieController::class, 'getSearchMovies']);
 
 // Dashboard users
