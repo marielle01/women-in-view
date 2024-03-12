@@ -24,7 +24,7 @@ class MovieFactory extends Factory
             'overview'=> 'A woman is suspected of her husband’s murder, and their blind son faces a moral dilemma as the sole witness.',
             'release_date'=> '2023-08-23',
             'rating'=> 3,
-            'user_id'=> 1,
+            'user_id'=> 2,
             'created_at'=> now(),
             'updated_at'=> now(),
         ];

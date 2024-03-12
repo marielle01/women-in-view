@@ -39,7 +39,7 @@ class AuthController extends BaseController
                 [
                     'name' => 'required|string',
                     'email' => 'required|email|unique:users,email',
-                    'password' => 'required|string',
+                    'password' => 'required|string|min:8',
                 ]);
 
             $validated = $validateUser->validated();
@@ -63,7 +63,7 @@ class AuthController extends BaseController
 
             return response()->json([
                 'user' => $user,
-                'token' => $user->createToken("API TOKEN")->plainTextToken
+                'token' => $user->createToken("API TOKEN OF ". $user->name)->plainTextToken
             ], 200);
 
         } catch (\Throwable $th) {
@@ -106,7 +106,7 @@ class AuthController extends BaseController
             }
 
             $user = User::where('email', $request->email)->first();
-            $token = $user->createToken("API TOKEN OF " . $user->name)->plainTextToken;
+            $token = $user->createToken("API TOKEN OF ". $user->name)->plainTextToken;
 
             return response()->json([
                 'user' => new UserResource($user),
