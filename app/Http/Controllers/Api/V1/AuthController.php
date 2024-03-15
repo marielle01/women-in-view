@@ -29,7 +29,7 @@ class AuthController extends BaseController
 
     /**
      * @param Request $request
-     * @return User
+     * @return JsonResponse
      */
     public function register(Request $request):JsonResponse
     {

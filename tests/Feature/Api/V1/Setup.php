@@ -6,7 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class SetUp extends TestCase
+class Setup extends TestCase
 {
     protected static $Token;
     protected array $headers;
@@ -48,5 +48,4 @@ class SetUp extends TestCase
         }
         $this->withoutExceptionHandling();
     }
-
 }

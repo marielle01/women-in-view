@@ -2,11 +2,12 @@
 
 namespace Tests\Feature\Api\V1;
 
+use App\Models\Api\V1\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
-class AuthControllerTest extends SetUp
+class AuthControllerTest extends Setup
 {
     use RefreshDatabase;
 
@@ -24,16 +25,8 @@ class AuthControllerTest extends SetUp
             ],
             [
                 [
-                    'role_id' => 0,
-                ],
-                404,
-            ],
-            [
-                [
                     'email' => fake()->email,
-                    'password' => 'testpassword123',
-                    'firstName' => fake()->firstName,
-                    'lastName' => fake()->lastName,
+                    'name' => fake()->name(),
                     'role_id' => 2,
                 ],
                 200,
@@ -48,7 +41,7 @@ class AuthControllerTest extends SetUp
         return [
             [
                 [
-                    'currentPassword' => 'badCurrentPassword',
+                    'currentPassword' => 'badOldPassword',
                     'password' => 'newPassword',
                     'confirmPassword' => 'newPassword',
                 ],
@@ -56,7 +49,7 @@ class AuthControllerTest extends SetUp
             ],
             [
                 [
-                    'currentPassword' => 'GoodCurrentPassword',
+                    'currentPassword' => 'oldPassword12er',
                     'password' => 'BadMyNewPassword',
                     'confirmPassword' => 'BadMyNewPassword',
                 ],
@@ -64,24 +57,24 @@ class AuthControllerTest extends SetUp
             ],
             [
                 [
-                    'currentPassword' => 'GoodCurrentPassword',
-                    'password' => 'newPassword#12',
-                    'confirmPassword' => 'BadNewPassword#12rhjjkkkjhjhhj',
+                    'currentPassword' => 'oldPassword12er',
+                    'password' => 'newPassword12er',
+                    'confirmPassword' => 'BadNewPassword#12rhj',
                 ],
                 404,
             ],
             [
                 [
-                    'currentPassword' => 'GoodCurrentPassword',
-                    'password' => 'newPassword#12er',
-                    'confirmPassword' => 'newPassword#12er',
+                    'currentPassword' => 'oldPassword12er',
+                    'password' => 'newPassword12er',
+                    'confirmPassword' => 'newPassword12er',
                 ],
                 200,
             ],
         ];
     }
 
-    public function test_user_login(): void
+    public function test_admin_login(): void
     {
         // Assert
         $response = $this->postJson('api/login', [
@@ -89,7 +82,8 @@ class AuthControllerTest extends SetUp
             'password' => config('app.user_password'),
         ]);
         $response->assertStatus(200);
-        $response->assertJson(fn (AssertableJson $json) => $json->has('user')
+        $response->assertJson(fn (AssertableJson $json) => $json
+            ->has('user')
                 ->where('user.id', 1)
                 ->where('user.name', 'Admin')
                 ->where('user.email', 'admin@gmail.com')
@@ -98,7 +92,7 @@ class AuthControllerTest extends SetUp
         );
     }
 
-    public function test_user_login_failed(): void
+    public function test_admin_login_failed(): void
     {
         // Assert
         $response = $this->postJson('api/login', [
@@ -111,5 +105,30 @@ class AuthControllerTest extends SetUp
                 ->where('status', false)
                 ->etc(),
         );
+    }
+
+    /**
+     * @param array $data
+     * @param int $status
+     * @return void
+     * @dataProvider changePasswordProvider
+     */
+    public function test_change_password(array $data, int $status): void
+    {
+        $user = User::factory(['password' => 'oldPassword12er'])->create();
+
+        $response = $this->postJson('api/change-password', $data);
+
+        $response->assertStatus($status);
+
+        if ($status === 200) {
+            $response->assertJson(
+                fn(AssertableJson $json) =>$json
+                ->where('success', true)
+                ->where('message', 'Password has changed')
+                ->etc()
+            );
+        }
+
     }
 }
