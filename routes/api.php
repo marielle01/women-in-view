@@ -28,6 +28,7 @@ Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 Route::post('/change-password', [AuthController::class, 'changePassword'])->middleware('auth:sanctum');
 
+
 // CRUD
 Route::middleware(['auth:sanctum'])->group(function() {
     Route::resources([
@@ -36,13 +37,11 @@ Route::middleware(['auth:sanctum'])->group(function() {
     ]);
 });
 
+
 // Search Route
-Route::get('/search-movies', [MovieController::class, 'searchMovie'])->middleware('auth:sanctum');
-Route::get('/search-moviesTmbd', [MovieController::class, 'getSearchMovies']);
+Route::get('/search-movies/{movie_name}', [MovieController::class, 'searchMovie'])->middleware('auth:sanctum');
+//Route::get('/search-movies', [MovieController::class, 'searchMovie'])->middleware('auth:sanctum');
 
 // Dashboard users
 Route::get('user-movies/{user_id}', [MovieController::class, 'getUserMovies']);
 
-// tmdb api
-Route::post('/db-seed-movies', [MovieController::class, 'dbSeedMovie']);
-Route::get('/popular-movies', [MovieController::class, 'getPopularMovies']);

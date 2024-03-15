@@ -34,7 +34,8 @@ return new class extends Migration
                     'email' => config('app.user_email'),
                     'password' => Hash::make(config('app.user_password')),
                     'name' => config('app.user_name'),
-                    'email_verified_at' => date('Y-m-d h:i:s'),
+                    'created_at' => now(),
+                    'updated_at' => now(),
                     'role_id' => config('app.user_role'),
                 ],
             ]);
