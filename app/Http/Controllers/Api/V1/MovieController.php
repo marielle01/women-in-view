@@ -31,6 +31,7 @@ class MovieController extends BaseController
             ->appends(request()->query());
 
         return MovieResource::collection($movies);
+        //return $this->sendResponse(MovieResource::collection($movies));
     }
 
     /**
@@ -71,12 +72,7 @@ class MovieController extends BaseController
         return $this->sendResponse('Movie deleted successfully.');
     }
 
-    /**
-     * Search movies
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
+    // search function
     public function searchMovie(Request $request): JsonResponse
     {
         // search input
@@ -112,16 +108,126 @@ class MovieController extends BaseController
     }
 
     // movies linked to a user
-
-    /**
-     * Movies linked to a user
-     *
-     * @param $userId
-     * @return JsonResponse
-     */
     public function getUserMovies($userId): JsonResponse
     {
         $movies = Movie::where('user_id', $userId)->get();
         return response()->json($movies);
     }
+
+
+
+    // tmbd functions
+    public function dbSeedMovie(): JsonResponse
+    {
+        $movies = Http::withToken(
+            config('services.tmdb.token')
+        )->get('https://api.themoviedb.org/3/movie/popular')->json();
+
+        foreach ($movies['results'] as $movie) {
+            //dd($movie);
+        Movie::create([
+            'overview'=>$movie['overview'],
+            //'imdb_id'=>$movie['imdb_id'],
+            'original_title'=>$movie['original_title'],
+            'poster_path'=>$movie['poster_path'],
+            'release_date'=>$movie['release_date'],
+            ]);
+        }
+
+        return $this->sendResponse('Movies added');
+    }
+
+    public function getPopularMovies(): JsonResponse
+    {
+        $movies = Http::withToken(
+            config('services.tmdb.token')
+        )->get('https://api.themoviedb.org/3/movie/popular')->json();
+        return $this->sendResponse($movies);
+    }
+
+    public function getSearchMovies(): JsonResponse
+    {
+        $movies = Http::withToken(
+            config('services.tmdb.token')
+        )->get('https://api.themoviedb.org/3/search/movie')->json();
+        return $this->sendResponse($movies);
+    }
+
+
+    /*public function getSearchMovies(string $movieName): array
+    {
+        $response = Http::withToken(config('services.tmdb.token'))
+            ->get('https://api.themoviedb.org/3/search/movie', [
+                'query' => [
+                    'query' => $movieName
+                ]
+            ])->json();
+
+        return $response['results'];
+    }*/
+
+    public function searchMovie2(Request $request): JsonResponse
+    {
+        // search input
+        $movie = $request->get('movie_name');
+
+        // search all movies whose original title starts or ends with or contains the search term
+        $searchResults = Movie::where('original_title', 'like', '%' . $movie . '%')->get();
+
+        // If no local results found, search externally
+        if ($searchResults->isEmpty()) {
+            $externalMovies = $this->getSearchMovies($movie);
+            return $this->sendResponse($externalMovies);
+        }
+
+        return $this->sendResponse($searchResults);
+    }
+
+    public function searchMovie3(Request $request): JsonResponse
+    {
+        // search input
+        $movie = $request->get('movie_name');
+
+        // search all movies whose original title starts or ends with or contains the search term
+        $searchResults = Movie::where('original_title', 'like', '%' . $movie . '%')->get();
+
+        // If no local results found, search externally
+        if ($searchResults->isEmpty()) {
+            $externalMovies = $this->getSearchMovies($movie);
+            return $this->sendResponse($externalMovies);
+        } else {
+            // Merge external results with local results
+            $externalMovies = $this->getSearchMovies($movie);
+            $searchResults = $searchResults->merge($externalMovies);
+        }
+
+        return $this->sendResponse($searchResults);
+    }
+
+    public function searchMovie0(Request $request): JsonResponse
+    {
+        // search input
+        $movie = $request->get('movie_name');
+
+        // search all movies whose original title starts with that match with wildcard character
+        $search1 = Movie::where('original_title','like','%'.$movie.'%')->get();
+
+        // search movies from external API
+        $externalMovies = Http::withToken(
+            config('services.tmdb.token')
+        )->get('https://api.themoviedb.org/3/search/movie?query='.$movie)->json();
+
+        // merge results
+        $search = $search1->merge($externalMovies['results']);
+
+        // convert results to JSON
+        $externalMoviesJson = json_encode($externalMovies);
+
+        // return response with merged results and external movies as JSON
+        return $this->sendResponse([
+            'results' => $search,
+            'external_movies' => $externalMoviesJson
+        ]);
+    }
+
 }
