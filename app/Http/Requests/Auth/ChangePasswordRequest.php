@@ -32,7 +32,7 @@ class ChangePasswordRequest extends FormRequest
             'password' => [
                 'required',
                 'string',
-                'regex:/^(?=.*?[a-zA-Z])(?=.*?[0-9])(=.*?[#?!@$%^&*-]){0,}.{8,}$/',
+                'min:8',
             ],
             'confirmPassword' => [
                 'required',
