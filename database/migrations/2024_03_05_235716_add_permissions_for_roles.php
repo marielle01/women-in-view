@@ -41,8 +41,8 @@ return new class extends Migration
             ['name' => 'updateMovies'],
             ['name' => 'deleteMovies'],
             ['name' => 'viewUsers'],
-            ['name' => 'createUsers'],
             ['name' => 'updateUsers'],
+            ['name' => 'deleteUsers'],
         ];
 
         foreach ($newPermissionsSubscriber as $permission) {
@@ -58,16 +58,16 @@ return new class extends Migration
     public function down(): void
     {
         DB::table('permissions')->whereIn('name', [
-            'view movies',
-            'show movie',
-            'create movies',
-            'update movies',
-            'delete movies',
-            'view users',
-            'show users',
-            'create users',
-            'update users',
-            'delete users',
+            'viewAnyMovies',
+            'viewMovies',
+            'createMovies',
+            'updateMovies',
+            'deleteMovies',
+            'viewAnyUsers',
+            'viewUsers',
+            'createUsers',
+            'updateUsers',
+            'deleteUsers',
         ])->delete();
     }
 };
