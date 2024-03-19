@@ -17,16 +17,14 @@ class MovieFactory extends Factory
     public function definition(): array
     {
         return [
-            'tmdb_id' => 915935,
-            'original_title'=> 'Anatomie d\'une chute',
-            'poster_path'=> '/kQs6keheMwCxJxrzV83VUwFtHkB.jpg',
-            'backdrop_path'=> '/fGe1ej335XbqN1j9teoDpofpbLX.jpg',
-            'overview'=> 'A woman is suspected of her husband’s murder, and their blind son faces a moral dilemma as the sole witness.',
-            'release_date'=> '2023-08-23',
-            'rating'=> 3,
-            'user_id'=> 2,
-            'created_at'=> now(),
-            'updated_at'=> now(),
+            'tmdb_id' => fake()->numberBetween(),
+            'original_title' => fake()->sentence(2),
+            'poster_path' => '/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg',
+            'backdrop_path' => '/JeGkRdNsOuMrgwBdtB0hp763MU.jpg',
+            'overview' => fake()->text(30),
+            'release_date' => fake()->date(),
+            'rating' => fake()->numberBetween(1, 3),
+            'user_id' => 1,
         ];
     }
 }

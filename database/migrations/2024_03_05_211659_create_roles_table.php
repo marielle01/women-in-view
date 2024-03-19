@@ -24,21 +24,9 @@ return new class extends Migration
             ['name' => 'subscriber'],
         ]);
 
-        Schema::table('users', function ($table) {
-            $table->foreignIdFor(\App\Models\Api\V1\Role::class)->nullable()->constrained();
-        });
 
-        DB::table('users')->insert(
-            [
-                [
-                    'email' => config('app.user_email'),
-                    'password' => Hash::make(config('app.user_password')),
-                    'name' => config('app.user_name'),
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                    'role_id' => config('app.user_role'),
-                ],
-            ]);
+
+
     }
 
     /**
@@ -46,9 +34,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function ($table) {
-            $table->dropColumn(['role_id']);
-        });
+
         Schema::dropIfExists('roles');
     }
 };

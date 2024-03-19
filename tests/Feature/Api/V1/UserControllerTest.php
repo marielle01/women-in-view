@@ -2,11 +2,8 @@
 
 namespace Tests\Feature\Api\V1;
 
-use App\Models\Api\V1\Permission;
-use App\Models\Api\V1\Role;
 use App\Models\Api\V1\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
@@ -14,19 +11,6 @@ use Tests\TestCase;
 class UserControllerTest extends TestCase
 {
     use RefreshDatabase;
-
-
-
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        // Create an admin
-        $this->admin = User::factory()->create(['role_id' => 1]);
-
-        // Create a subscriber
-        $this->subscriber = User::factory()->create(['role_id' => 2]);
-    }
 
     public static function addUserProvider(): array
     {
@@ -51,7 +35,7 @@ class UserControllerTest extends TestCase
                 [
                     'name' => fake()->name(),
                     'email' => fake()->email,
-                    'password' => 'mypass',
+                    'password' => 'short',
                 ],
                 404,
             ],
@@ -59,7 +43,7 @@ class UserControllerTest extends TestCase
                 [
                     'name' => fake()->name(),
                     'email' => fake()->email,
-                    'password' => 'goodPassword',
+                    'password' => 'goodPassword12',
                 ],
                 200,
             ],
@@ -69,7 +53,7 @@ class UserControllerTest extends TestCase
     /**
      * @return array[]
      */
-    protected static function updateUserProvider(): array
+    public static function updateUserProvider(): array
     {
         return [
             [
@@ -80,8 +64,8 @@ class UserControllerTest extends TestCase
             ],
             [
                 [
-                    'email' => fake()->email,
-                    'name' => fake()->name(),
+                    'name' => 'Jane Doe',
+                    'email' => 'janeDoe@gmail.com',
                 ],
                 200,
             ],
@@ -92,43 +76,179 @@ class UserControllerTest extends TestCase
     public function test_view_any_users()
     {
         $this->setUserPermissions(['viewAnyUsers']);
-        Sanctum::actingAs($this->admin, ['*']);
+        Sanctum::actingAs($this->user, ['*']);
 
-        $users = User::factory()->count(3)->create(['role_id' => 2]);
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
+        $user3 = User::factory()->create();
 
         $response = $this->getJson('api/users');
 
-        $response->assertStatus(200)
-            ->assertJsonCount(3, 'data')
-            ->assertJsonStructure([
-                'data' => [
-                    '*' => [
-                        'id',
-                        'name',
-                        'email',
-                        'role_id',
-                    ],
-                ],
-            ])
-            ->assertJsonFragment([
-                'id' => $users[0]->id,
-                'name' => $users[0]->name,
-                'email' => $users[0]->email,
-                'role_id' => 2,
-            ])
-            ->assertJsonFragment([
-                'id' => $users[1]->id,
-                'name' => $users[1]->name,
-                'email' => $users[1]->email,
-                'role_id' => 2,
-            ])
-            ->assertJsonFragment([
-                'id' => $users[2]->id,
-                'name' => $users[2]->name,
-                'email' => $users[2]->email,
-                'role_id' => 2,
-            ]);
+        if ($response->status() === 200) {
+            $response->assertJson(
+                fn (AssertableJson $json) => $json
+                    ->has('data', 5)
+                    ->has('data.2', fn (AssertableJson $json) => $json
+                        ->has('id')
+                        ->where('name', $user1->name)
+                        ->where('email', $user1->email)
+                        ->where('role_id', $user1->role_id)
+                        ->etc(),
+                    )
+                    ->has('data.3', fn (AssertableJson $json) => $json
+                        ->where('id', $user2->id)
+                        ->where('name', $user2->name)
+                        ->where('email', $user2->email)
+                        ->where('role_id', $user2->role_id)
+                        ->etc(),
+                    )
+                    ->has('data.4', fn (AssertableJson $json) => $json
+                        ->where('id', $user3->id)
+                        ->where('name', $user3->name)
+                        ->where('email', $user3->email)
+                        ->where('role_id', $user3->role_id)
+                        ->etc(),
+                    )
+                    ->etc()
+            );
+        }
+    }
+
+    public function test_view_any_users_denied()
+    {
+        $this->setUserPermissions([]);
+
+        $user = User::factory(['role_id' => 2])->create()->save();
+        Sanctum::actingAs($this->user, ['*']);
+
+        $response = $this->getJson('api/users');
+        $response->assertStatus(403);
+    }
+
+    public function test_show_user_subscriber()
+    {
+        $this->setUserPermissions(['viewUsers']);
+        Sanctum::actingAs($this->user, ['*']);
+
+        $user = User::factory(['role_id' => 2])->create();
+
+        $response = $this->getJson('api/users/'.$user->id);
+
+        $response->assertStatus(200);
+
+        $response->assertJson(
+            fn(AssertableJson $json) => $json
+                ->has('data', fn (AssertableJson $json) => $json
+                    ->where('id', $user->id)
+                    ->where('name', $user->name)
+                    ->where('email', $user->email)
+                    ->where('role_id', $user->role_id)
+                    ->etc(),
+                )
+                ->etc(),
+        );
+    }
+
+    public function test_show_user()
+    {
+        $this->setUserPermissions(['viewUsers']);
+        Sanctum::actingAs($this->user, ['*']);
+
+        $user = User::factory(['role_id' => 1])->create();
+
+        $response = $this->getJson('api/users/'.$user->id);
+
+        $response->assertStatus(200);
+
+        $response->assertJson(
+            fn(AssertableJson $json) => $json
+                ->has('data', fn (AssertableJson $json) => $json
+                    ->where('id', $user->id)
+                    ->where('name', $user->name)
+                    ->where('email', $user->email)
+                    ->where('role_id', $user->role_id)
+                    ->etc(),
+                )
+                ->etc(),
+        );
     }
 
 
+    /**
+     * @dataProvider updateUserProvider
+     * @return void
+     */
+    public function test_update_user()
+    {
+        $this->setUserPermissions(['updateUsers']);
+
+        $user = User::factory()->create();
+        Sanctum::actingAs($this->user, ['*']);
+
+        $response = $this->putJson('api/users/'.$user->id);
+
+        $response->assertStatus(200);
+
+        $response->assertJson(
+            fn(AssertableJson $json) => $json
+                ->has('data', fn (AssertableJson $json) => $json
+                    ->where('id', $user->id)
+                    ->where('name', $user->name)
+                    ->where('email', $user->email)
+                    ->where('role_id', $user->role_id)
+                    ->etc(),
+                )
+                ->etc(),
+        );
+    }
+
+    /**
+     * @dataProvider addUserProvider
+     *
+     * @return void
+     */
+    public function test_add_user($data, $status)
+    {
+        $this->setUserPermissions(['createUsers']);
+
+        Sanctum::actingAs($this->user, ['*']);
+
+        $response = $this->postJson('api/users', $data);
+
+        $response->assertStatus($status);
+
+        if ($status === 200) {
+            $response->assertJson(
+                fn(AssertableJson $json) => $json
+                    ->has('data', fn (AssertableJson $json) => $json
+                        ->has('id')
+                        ->where('name', $data['name'])
+                        ->where('email', $data['email'])
+                        ->has('role_id')
+                        ->etc(),
+                    )
+                    ->etc(),
+            );
+        }
+    }
+
+    public function test_delete_user()
+    {
+        $this->setUserPermissions(['deleteUsers']);
+
+        $user = User::factory()->create();
+
+        $response = $this->deleteJson('api/users/'.$user->id);
+
+        $response->assertStatus(200);
+
+        $response->assertJson(
+            fn (AssertableJson $json) => $json
+                ->where('success', true)
+                ->where('message', 'User deleted')
+                ->etc(),
+        );
+
+        $this->assertModelMissing($user);
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api\V1;
 
 use App\Http\Requests\AppFormRequest;
+use App\Models\Api\V1\Role;
 use App\Models\Api\V1\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -41,10 +42,12 @@ class StoreUserRequest extends AppFormRequest
             'password' => [
                 'required',
                 'string',
+                'min:8'
                 //'regex:/^(?=.*?[a-zA-Z])(?=.*?[0-9]){0,}.{8,}$/',
             ],
             'role_id' => [
-                'exists:\Spatie\Permission\Models\Role,id'
+                'integer',
+                Rule::exists(Role::class,'id'),
             ]
         ];
 

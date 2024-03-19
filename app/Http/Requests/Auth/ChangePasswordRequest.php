@@ -2,11 +2,12 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Http\Requests\AppFormRequest;
 use App\Rules\ConfirmPassword;
 use App\Rules\CurrentPassword;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ChangePasswordRequest extends FormRequest
+class ChangePasswordRequest extends AppFormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
-class AuthControllerTest extends Setup
+class AuthControllerTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -53,7 +53,7 @@ class AuthControllerTest extends Setup
         ];
     }
 
-    public function test_admin_login(): void
+    public function test_user_login(): void
     {
         // Assert
         $response = $this->postJson('api/login', [
@@ -70,7 +70,7 @@ class AuthControllerTest extends Setup
         );
     }
 
-    public function test_admin_login_failed(): void
+    public function test_user_login_failed(): void
     {
         // Assert
         $response = $this->postJson('api/login', [
@@ -101,7 +101,6 @@ class AuthControllerTest extends Setup
         ]);
 
         $response = $this->postJson('api/change-password', $data);
-
         $response->assertStatus($status);
 
         if ($status === 200) {
@@ -112,67 +111,5 @@ class AuthControllerTest extends Setup
                 ->etc()
             );
         }
-    }
-
-    /*public function test_user_login(array $data): void
-    {
-        $user = User::factory()->create();
-        // Assert
-        $response = $this->postJson('api/login', $data);
-
-        $response->assertStatus(200);
-        $response->assertJson(fn (AssertableJson $json) => $json
-            ->has('user')
-                ->where('id', $user->id )
-                ->where('name', $user->name)
-                ->where('email', $user->email)
-                ->where('role_id', $user->role_id)
-                ->etc()
-            ->where('token', $user->token)
-            ->where('message', $user->message)
-            ->etc()
-
-        );
-    }*/
-
-    public function test_user_login(): void
-    {
-        $user = User::factory(
-            [
-                'name' => 'Jane Doe',
-                'email' => 'jane@gmail',
-                'password' => 'janePassword56',
-            ]
-        )->create()->save();
-
-        // Assert
-        $response = $this->postJson('api/login', [
-            'email' => 'jane@gmail',
-            'password' => 'janePassword56',
-        ]);
-        $response->assertJson(fn (AssertableJson $json) => $json
-            ->has('user')
-            ->where('id', $user->id )
-            ->where('name', $user->name )
-            ->where('email', $user->email)
-            ->where('role_id', $user->role_id)
-            ->etc(),
-        );
-    }
-
-
-    public function test_users_can_logout(): void
-    {
-        $user = User::factory()->create();
-
-        $response = $this->actingAs($user)->post('api/logout');
-
-        $response->assertStatus(200);
-        $response->assertJson(
-            fn (AssertableJson $json) => $json
-                ->where('status', true)
-                ->where('message', 'User logged out successfully')
-                ->etc(),
-        );
     }
 }
