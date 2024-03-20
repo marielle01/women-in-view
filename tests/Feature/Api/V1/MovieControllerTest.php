@@ -59,7 +59,13 @@ class MovieControllerTest extends TestCase
             ],
             [
                 [
-                    'rating' => 3,
+                    'tmdb_id' => 27205,
+                    'original_title' => 'Inception',
+                    'poster_path' => '/oYuLEt3zVCKq57qu2F8dT7NIa6f.jpg',
+                    'backdrop_path' => '/JeGkRdNsOuMrgwBdtB0hp763MU.jpg',
+                    'overview' => "Cobb, a skilled thief who commits corporate espionage by infiltrating the subconscious of his targets is offered a chance to regain his old life as payment for a task considered to be impossible: \"inception\", the implantation of another person\'s idea into a target\'s subconscious.",
+                    'release_date' => '2010-07-15',
+                    'rating' => 1,
                 ],
                 200,
             ],
@@ -67,10 +73,84 @@ class MovieControllerTest extends TestCase
     }
 
 
+    public function test_view_any_movies()
+    {
+        $this->setUserPermissions(['viewAnyMovies']);
+        Sanctum::actingAs($this->user, ['*']);
+
+        $movie1 = Movie::factory()->create();
+        $movie2 = Movie::factory()->create();
+        $movie3 = Movie::factory()->create();
+        $movie4 = Movie::factory()->create();
+
+        $response = $this->getJson('api/movies');
+
+        if ($response->status() === 200) {
+            $response->assertJson(
+                fn (AssertableJson $json) => $json
+                    ->has('data', 4)
+                    ->has('data.0', fn (AssertableJson $json) => $json
+                        ->has('id')
+                        ->where('tmdb_id', $movie1->tmdb_id)
+                        ->where('original_title', $movie1->original_title)
+                        ->where('poster_path', $movie1->poster_path)
+                        ->etc(),
+                    )
+                    ->has('data.1', fn (AssertableJson $json) => $json
+                        ->where('id', $movie2->id)
+                        ->where('tmdb_id', $movie2->tmdb_id)
+                        ->where('original_title', $movie2->original_title)
+                        ->where('poster_path', $movie2->poster_path)
+                        ->etc(),
+                    )
+                    ->has('data.2', fn (AssertableJson $json) => $json
+                        ->where('id', $movie3->id)
+                        ->where('tmdb_id', $movie3->tmdb_id)
+                        ->where('original_title', $movie3->original_title)
+                        ->where('poster_path', $movie3->poster_path)
+                        ->etc(),
+                    )
+                    ->has('data.3', fn (AssertableJson $json) => $json
+                        ->where('id', $movie4->id)
+                        ->where('tmdb_id', $movie4->tmdb_id)
+                        ->where('original_title', $movie4->original_title)
+                        ->where('poster_path', $movie4->poster_path)
+                        ->etc(),
+                    )
+                    ->etc()
+            );
+        }
+    }
+
+
+    public function test_show_movie()
+    {
+        $this->setUserPermissions(['viewMovies']);
+        Sanctum::actingAs($this->user, ['*']);
+
+        $movie = Movie::factory()->create();
+
+        $response = $this->getJson('api/movies/'.$movie->id);
+
+        $response->assertStatus(200);
+
+        $response->assertJson(
+            fn(AssertableJson $json) => $json
+                ->has('data', fn (AssertableJson $json) => $json
+                    ->where('id', $movie->id)
+                    ->where('tmdb_id', $movie->tmdb_id)
+                    ->where('original_title', $movie->original_title)
+                    ->where('poster_path', $movie->poster_path)
+                    ->etc(),
+                )
+                ->etc(),
+        );
+    }
+
+
     /**
      * @dataProvider addMovieProvider
      *
-     * @return void
      */
     public function test_add_movie($data, $status)
     {
@@ -106,38 +186,55 @@ class MovieControllerTest extends TestCase
      * @dataProvider updateMovieProvider
      * @return void
      */
-    public function test_update_rating()
+    public function test_update_rating($data, $status)
     {
-        //$this->actingAs($this->user);
-
         $this->setUserPermissions(['updateMovies']);
 
         Sanctum::actingAs($this->user, ['*']);
 
-        $movie = Movie::factory(['id' => 1])->create();
-        $movie->rating = 2;
+        $movie = Movie::factory()->create();
+        $movie->rating = 3;
         $movie->save();
 
 
-        $response = $this->putJson('/api/movies' .$movie->id);
+        $response = $this->putJson('/api/movies' .$movie->id, $data);
+
+        $response->assertStatus($status);
+
+        if ($response->status() === 200) {
+            $response->assertJson(
+                fn(AssertableJson $json) => $json
+                    ->has('data', fn (AssertableJson $json) => $json
+                        ->where('id', $movie->id)
+                        ->where('tmdb_id', $movie->tmdb_id)
+                        ->where('original_title', $movie->original_title)
+                        ->where('poster_path', $movie->poster_path)
+                        ->where('backdrop_path', $movie->backdrop_path)
+                        ->where('overview', $movie->overview)
+                        ->where('release_date', $movie->release_date)
+                        ->where('rating', 1)
+                        ->etc(),
+                    )
+                    ->etc(),
+            );
+        }
+
+    }
+
+
+    public function test_delete_movie()
+    {
+        $this->setUserPermissions(['deleteMovies']);
+
+        $user = User::factory()->create();
+        Sanctum::actingAs($user, ['*']);
+
+        $movie = Movie::factory()->create();
+
+        $response = $this->deleteJson('/api/movies' .$movie->id);
 
         $response->assertStatus(200);
-
-        $response->assertJson(
-            fn(AssertableJson $json) => $json
-                ->has('data', fn (AssertableJson $json) => $json
-                    ->where('id', $movie->id)
-                    ->where('tmdb_id', $movie->tmdb_id)
-                    ->where('original_title', $movie->original_title)
-                    ->where('poster_path', $movie->poster_path)
-                    ->where('backdrop_path', $movie->backdrop_path)
-                    ->where('overview', $movie->overview)
-                    ->where('release_date', $movie->release_date)
-                    ->where('rating', 3)
-                    ->etc(),
-                )
-                ->etc(),
-        );
+        $this->assertModelMissing($movie);
     }
 
     public function test_search_movie()
@@ -145,9 +242,9 @@ class MovieControllerTest extends TestCase
         $user = User::factory()->create();
         Sanctum::actingAs($user, ['*']);
 
-        $this->partialMock(MovieController::class, function (MockInterface $mock) {
+        /*$this->partialMock(MovieController::class, function (MockInterface $mock) {
             $mock->shouldReceive('searchMovie');
-        });
+        });*/
 
         $movie1 = Movie::factory([
                 'tmdb_id' => 1,

@@ -112,4 +112,14 @@ class AuthControllerTest extends TestCase
             );
         }
     }
+
+    public function test_users_can_logout(): void
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->post('api/logout');
+
+        $this->assertGuest();
+        $response->assertNoContent();
+    }
 }
