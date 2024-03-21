@@ -26,28 +26,36 @@ class StoreMovieRequest extends AppFormRequest
     {
         return [
             'tmdb_id' => [
+                'required',
                 'integer',
                 Rule::unique(Movie::class)
             ],
             'original_title' => [
+                'required',
                 'string'
             ],
             'poster_path' => [
+                'required',
                 'string'
             ],
             'backdrop_path' => [
+                'required',
                 'string'
             ],
             'overview' => [
+                'required',
                 'string'
             ],
             'release_date' => [
+                'required',
                 'date'
             ],
             'user_id' => [
+                'required',
                 'integer'
             ],
             'rating' => [
+                'required',
                 'integer'
             ],
         ];

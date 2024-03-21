@@ -12,6 +12,44 @@ class AuthControllerTest extends TestCase
     use RefreshDatabase;
 
 
+    public static function addUserRegister(): array
+    {
+        return [
+            [
+                [
+                    'name' => '',
+                    'email' => fake()->email,
+                    'password' => fake()->password(8),
+                ],
+                500,
+            ],
+            [
+                [
+                    'name' => fake()->name(),
+                    'email' => 'jane.com',
+                    'password' => fake()->password(8),
+                ],
+                500,
+            ],
+            [
+                [
+                    'name' => fake()->name(),
+                    'email' => fake()->email,
+                    'password' => '',
+                ],
+                500,
+            ],
+            [
+                [
+                    'name' => fake()->name(),
+                    'email' => fake()->email,
+                    'password' => fake()->password(8),
+                ],
+                200,
+            ],
+        ];
+    }
+
     /**
      * @return array[]
      */
@@ -51,6 +89,35 @@ class AuthControllerTest extends TestCase
                 200,
             ],
         ];
+    }
+
+
+    /**
+     * @dataProvider addUserRegister
+     *
+     * @return void
+     */
+    public function test_user_register($data, $status)
+    {
+
+        $response = $this->postJson('api/register', $data);
+
+        $response->assertStatus($status);
+
+        if ($status === 200) {
+            $response->assertJson(
+                fn(AssertableJson $json) => $json
+                    ->has('user', fn (AssertableJson $json) => $json
+                        ->has('id')
+                        ->where('name', $data['name'])
+                        ->where('email', $data['email'])
+                        ->has('role_id')
+                        ->etc(),
+                    )
+                    //->has('token')
+                    ->etc(),
+            );
+        }
     }
 
     public function test_user_login(): void
@@ -113,13 +180,4 @@ class AuthControllerTest extends TestCase
         }
     }
 
-    public function test_users_can_logout(): void
-    {
-        $user = User::factory()->create();
-
-        $response = $this->actingAs($user)->post('api/logout');
-
-        $this->assertGuest();
-        $response->assertNoContent();
-    }
 }

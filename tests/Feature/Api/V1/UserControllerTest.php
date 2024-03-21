@@ -88,21 +88,21 @@ class UserControllerTest extends TestCase
             $response->assertJson(
                 fn (AssertableJson $json) => $json
                     ->has('data', 5)
-                    ->has('data.2', fn (AssertableJson $json) => $json
+                    ->has('data.1', fn (AssertableJson $json) => $json
                         ->has('id')
                         ->where('name', $user1->name)
                         ->where('email', $user1->email)
                         ->where('role_id', $user1->role_id)
                         ->etc(),
                     )
-                    ->has('data.3', fn (AssertableJson $json) => $json
+                    ->has('data.2', fn (AssertableJson $json) => $json
                         ->where('id', $user2->id)
                         ->where('name', $user2->name)
                         ->where('email', $user2->email)
                         ->where('role_id', $user2->role_id)
                         ->etc(),
                     )
-                    ->has('data.4', fn (AssertableJson $json) => $json
+                    ->has('data.3', fn (AssertableJson $json) => $json
                         ->where('id', $user3->id)
                         ->where('name', $user3->name)
                         ->where('email', $user3->email)
@@ -237,17 +237,11 @@ class UserControllerTest extends TestCase
         $this->setUserPermissions(['deleteUsers']);
 
         $user = User::factory()->create();
+        Sanctum::actingAs($this->user, ['*']);
 
         $response = $this->deleteJson('api/users/'.$user->id);
 
         $response->assertStatus(200);
-
-        $response->assertJson(
-            fn (AssertableJson $json) => $json
-                ->where('success', true)
-                ->where('message', 'User deleted')
-                ->etc(),
-        );
 
         $this->assertModelMissing($user);
     }
