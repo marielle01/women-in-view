@@ -2,11 +2,12 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Http\Requests\AppFormRequest;
 use App\Rules\ConfirmPassword;
 use App\Rules\CurrentPassword;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ChangePasswordRequest extends FormRequest
+class ChangePasswordRequest extends AppFormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -32,7 +33,7 @@ class ChangePasswordRequest extends FormRequest
             'password' => [
                 'required',
                 'string',
-                'regex:/^(?=.*?[a-zA-Z])(?=.*?[0-9])(=.*?[#?!@$%^&*-]){0,}.{8,}$/',
+                'min:8',
             ],
             'confirmPassword' => [
                 'required',

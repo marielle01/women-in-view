@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests\Api\V1;
 
+use App\Http\Requests\AppFormRequest;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateMovieRequest extends FormRequest
+class UpdateMovieRequest extends AppFormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
