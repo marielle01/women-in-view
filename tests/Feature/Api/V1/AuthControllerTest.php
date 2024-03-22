@@ -114,7 +114,7 @@ class AuthControllerTest extends TestCase
                         ->has('role_id')
                         ->etc(),
                     )
-                    //->has('token')
+                    ->has('token')
                     ->etc(),
             );
         }
