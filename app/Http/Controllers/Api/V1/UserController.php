@@ -8,6 +8,7 @@ use App\Http\Requests\Api\V1\UpdateUserRequest;
 use App\Http\Resources\Api\V1\UserResource;
 use App\Models\Api\V1\User;
 use App\Repositories\Api\V1\UserRepository;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Spatie\QueryBuilder\QueryBuilder;
 
@@ -22,14 +23,14 @@ class UserController extends BaseController
     /**
      * Display a listing of the resource.
      */
-    public function index(): JsonResponse
+    public function index(Request $request):  \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         $users = QueryBuilder::for(User::class)
             ->orderByDesc('updated_at')
             ->paginate(12)
             ->appends(request()->query());
 
-        return  $this->sendResponse(UserResource::collection($users));
+        return  UserResource::collection($users);
     }
 
     /**
