@@ -31,6 +31,8 @@ class MovieRepository
     {
         $movie->fill($data);
 
+        $movie->user()->associate(auth()->user());
+
         $movie->save();
 
         return $movie;
