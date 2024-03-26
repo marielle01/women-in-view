@@ -74,18 +74,30 @@ class MovieController extends BaseController
 
     /**
      * @param string $movie
+     * @param int $perPage
      * @return JsonResponse
      */
-    public function searchMovie(string $movie): JsonResponse
+
+
+   /* public function searchMovie(string $movie, int $perPage = 12): JsonResponse
     {
         // search all movies whose original title starts with that match with wildcard character
-        $search1 = Movie::where('original_title','like','%'.$movie)->get()->keyBy('tmdb_id');
+        $search1 = Movie::where('original_title','like','%'.$movie)
+            //->paginate($perPage)
+            ->paginate(2)
+            ->keyBy('tmdb_id');
 
         // search all movies whose original title ends with that match with wildcard character
-        $search2 = Movie::where('original_title','like',$movie.'%')->get()->keyBy('tmdb_id');
+        $search2 = Movie::where('original_title','like',$movie.'%')
+            //->paginate($perPage)
+            ->paginate(2)
+            ->keyBy('tmdb_id');
 
         // search all movies whose original title contains that match with wildcard character
-        $search3 = Movie::where('original_title','like','%'.$movie.'%')->get()->keyBy('tmdb_id');
+        $search3 = Movie::where('original_title','like','%'.$movie.'%')
+            //->paginate($perPage)
+            ->paginate(2)
+            ->keyBy('tmdb_id');
 
         // search movies from external API
         $movies = Http::withToken(
@@ -103,8 +115,65 @@ class MovieController extends BaseController
         // remove duplicates based on tmdb_id
         $search = $search->unique('tmdb_id');
 
+        // return paginated results
+        //return $this->sendResponse($search->forPage(request()->input('page', 1), $perPage));
         return $this->sendResponse($search);
+    }*/
+
+    public function searchMovie(string $movie, int $perPage = 5): JsonResponse
+    {
+        // search all movies whose original title starts with that match with wildcard character
+        $search1 = Movie::where('original_title','like','%'.$movie)
+            ->paginate($perPage)
+            ->keyBy('tmdb_id');
+
+        // search all movies whose original title ends with that match with wildcard character
+        $search2 = Movie::where('original_title','like',$movie.'%')
+            ->paginate($perPage)
+            ->keyBy('tmdb_id');
+
+        // search all movies whose original title contains that match with wildcard character
+        $search3 = Movie::where('original_title','like','%'.$movie.'%')
+            ->paginate($perPage)
+            ->keyBy('tmdb_id');
+
+        // search movies from external API
+        $movies = Http::withToken(
+            config('services.tmdb.token')
+        )->get('https://api.themoviedb.org/3/search/movie?query='.$movie)->json();
+
+        // convert results to a collection and key them by tmdb_id
+        $collection = collect($movies['results'])->keyBy('id')->map(function ($item) {
+            return array_merge($item, ['tmdb_id' => $item['id']]);
+        });
+
+        // merge search results and external API results
+        $search = $search1->merge($search2)->merge($search3)->concat($collection);
+
+        // remove duplicates based on tmdb_id
+        $search = $search->unique('tmdb_id');
+
+        // get the current page
+        $currentPage = request()->input('page', 1);
+
+        // slice the collection to get the items for the current page
+        $items = $search->slice(($currentPage - 1) * $perPage, $perPage)->values();
+
+        // get the total number of pages
+        $totalPages = ceil(count($search) / $perPage);
+
+        // return the items, current page, total pages, and total results
+        return response()->json([
+            'data' => $items,
+            'meta' => [
+                'current_page' => $currentPage,
+                'total_pages' => $totalPages,
+                'total_results' => count($search)
+            ]
+        ]);
     }
+
+
 
     // movies linked to a user
     public function getUserMovies($userId): JsonResponse
