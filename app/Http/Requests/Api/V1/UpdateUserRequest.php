@@ -38,6 +38,7 @@ class UpdateUserRequest extends AppFormRequest
             'password' => [
                 'string',
                 //'regex:/^(?=.*?[a-zA-Z])(?=.*?[0-9])(=.*?[#?!@$%^&*-]){0,}.{8,}$/',
+                'regex:/^(?=.*?[a-zA-Z])(?=.*?[0-9]){0,}.{8,}$/'
             ],
         ];
     }

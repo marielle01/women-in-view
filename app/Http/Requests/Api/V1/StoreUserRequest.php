@@ -42,8 +42,8 @@ class StoreUserRequest extends AppFormRequest
             'password' => [
                 'required',
                 'string',
-                'min:8'
-                //'regex:/^(?=.*?[a-zA-Z])(?=.*?[0-9]){0,}.{8,}$/',
+                'min:8',
+                'regex:/^(?=.*?[a-zA-Z])(?=.*?[0-9]){0,}.{8,}$/',
             ],
             'role_id' => [
                 'integer',
