@@ -10,7 +10,10 @@ use App\Models\Api\V1\Movie;
 use App\Repositories\Api\V1\MovieRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class MovieController extends BaseController
@@ -76,8 +79,12 @@ class MovieController extends BaseController
      * @param string $movie
      * @return JsonResponse
      */
-    public function searchMovie(string $movie): JsonResponse
-    {
+
+    //public function searchMovie(string $movie): JsonResponse
+    /*{
+        // Get movie ratings from the database
+        $ratings = Movie::pluck('rating', 'tmdb_id');
+
         // search all movies whose original title starts with that match with wildcard character
         $search1 = Movie::where('original_title','like','%'.$movie)->get()->keyBy('tmdb_id');
 
@@ -100,10 +107,93 @@ class MovieController extends BaseController
         // merge search results and external API results
         $search = $search1->merge($search2)->merge($search3)->concat($collection);
 
+        // add rating to the results if the movie exists in the database
+        $search = $search->map(function ($item) use ($ratings) {
+            if (isset($ratings[$item['tmdb_id']])) {
+                $item['rating'] = $ratings[$item['tmdb_id']];
+            }
+            return $item;
+        });
+
         // remove duplicates based on tmdb_id
         $search = $search->unique('tmdb_id');
 
         return $this->sendResponse($search);
+    }*/
+
+
+
+    public function searchMovie(string $movie, int $page = 1, int $perPage = 12): JsonResponse
+    {
+        // Get movie ratings from the database
+        $ratings = Movie::pluck('rating', 'tmdb_id');
+
+        // search all movies whose original title starts with that match with wildcard character
+        $search1 = Movie::where('original_title','like','%'.$movie)->get()->keyBy('tmdb_id');
+
+        // search all movies whose original title ends with that match with wildcard character
+        $search2 = Movie::where('original_title','like',$movie.'%')->get()->keyBy('tmdb_id');
+
+        // search all movies whose original title contains that match with wildcard character
+        $search3 = Movie::where('original_title','like','%'.$movie.'%')->get()->keyBy('tmdb_id');
+
+        // search movies from external API
+        $movies = Http::withToken(
+            config('services.tmdb.token')
+        )->get('https://api.themoviedb.org/3/search/movie?query='.$movie)->json();
+
+        // convert results to a collection and key them by tmdb_id
+        $collection = collect($movies['results'])->keyBy('id')->map(function ($item) {
+            return array_merge($item, ['tmdb_id' => $item['id']]);
+        });
+
+        // merge search results and external API results
+        $search = $search1->merge($search2)->merge($search3)->concat($collection);
+
+        // add rating to the results if the movie exists in the database
+        $search = $search->map(function ($item) use ($ratings) {
+            if (isset($ratings[$item['tmdb_id']])) {
+                $item['rating'] = $ratings[$item['tmdb_id']];
+            }
+            return $item;
+        });
+
+        // remove duplicates based on tmdb_id
+        $search = $search->unique('tmdb_id');
+
+        // Paginate the results
+        $paginatedSearch = new LengthAwarePaginator(
+            $search->forPage($page, $perPage),
+            $search->count(),
+            $perPage,
+            $page,
+            ['path' => LengthAwarePaginator::resolveCurrentPath()]
+        );
+
+        // Set the base URL for pagination
+        $baseUrl = request()->url();
+        $queryParams = request()->query();
+        unset($queryParams['page']);
+        $baseUrl = strlen($baseUrl) > 0 && !str_contains($baseUrl, '?') ? $baseUrl . '?' : $baseUrl . '&';
+        $baseUrl = $baseUrl . http_build_query($queryParams) . '&page=';
+
+
+        // Return the paginated data with metadata
+        return response()->json([
+            'data' => $paginatedSearch->values(),
+            'meta' => [
+                'current_page' => $paginatedSearch->currentPage(),
+                'from' => $paginatedSearch->firstItem(),
+                'last_page' => $paginatedSearch->lastPage(),
+                'per_page' => $paginatedSearch->perPage(),
+                'to' => $paginatedSearch->lastItem(),
+                'total' => $paginatedSearch->total(),
+                'first_page_url' => $baseUrl . '1',
+                'last_page_url' => $baseUrl . $paginatedSearch->lastPage(),
+                'next_page_url' => $paginatedSearch->nextPageUrl() ? $baseUrl . $paginatedSearch->nextPageUrl() : null,
+                'prev_page_url' => $paginatedSearch->previousPageUrl() ? $baseUrl . $paginatedSearch->previousPageUrl() : null,
+            ],
+        ]);
     }
 
     // movies linked to a user
