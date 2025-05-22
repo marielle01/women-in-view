@@ -25,7 +25,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('FRONTEND_URL'), 'https://wiv.adahub.fr',
+    'allowed_origins' => [env('FRONTEND_URL'), 'https://wiv.adaschool.fr',
     'http://localhost:3000',],
 
     'allowed_origins_patterns' => [],
